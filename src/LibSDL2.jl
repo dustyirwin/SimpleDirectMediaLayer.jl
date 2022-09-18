@@ -52,27 +52,27 @@ const Sint64 = Int64
 
 const Uint64 = UInt64
 
-const SDL_compile_time_assert_uint8 = NTuple{1, Cint}
+const SDL_compile_time_assert_uint8 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_sint8 = NTuple{1, Cint}
+const SDL_compile_time_assert_sint8 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_uint16 = NTuple{1, Cint}
+const SDL_compile_time_assert_uint16 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_sint16 = NTuple{1, Cint}
+const SDL_compile_time_assert_sint16 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_uint32 = NTuple{1, Cint}
+const SDL_compile_time_assert_uint32 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_sint32 = NTuple{1, Cint}
+const SDL_compile_time_assert_sint32 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_uint64 = NTuple{1, Cint}
+const SDL_compile_time_assert_uint64 = NTuple{1,Cint}
 
-const SDL_compile_time_assert_sint64 = NTuple{1, Cint}
+const SDL_compile_time_assert_sint64 = NTuple{1,Cint}
 
 @cenum SDL_DUMMY_ENUM::UInt32 begin
     DUMMY_ENUM_VALUE = 0
 end
 
-const SDL_compile_time_assert_enum = NTuple{1, Cint}
+const SDL_compile_time_assert_enum = NTuple{1,Cint}
 
 function SDL_malloc(size)
     ccall((:SDL_malloc, libsdl2), Ptr{Cvoid}, (Csize_t,), size)
@@ -778,7 +778,7 @@ function SDL_TLSSet(id, value, destructor)
 end
 
 struct SDL_RWops
-    data::NTuple{72, UInt8}
+    data::NTuple{72,UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_RWops}, f::Symbol)
@@ -936,7 +936,7 @@ end
 const SDL_AudioFilter = Ptr{Cvoid}
 
 struct SDL_AudioCVT
-    data::NTuple{128, UInt8}
+    data::NTuple{128,UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_AudioCVT}, f::Symbol)
@@ -949,7 +949,7 @@ function Base.getproperty(x::Ptr{SDL_AudioCVT}, f::Symbol)
     f === :len_cvt && return Ptr{Cint}(x + 28)
     f === :len_mult && return Ptr{Cint}(x + 32)
     f === :len_ratio && return Ptr{Cdouble}(x + 36)
-    f === :filters && return Ptr{NTuple{10, SDL_AudioFilter}}(x + 44)
+    f === :filters && return Ptr{NTuple{10,SDL_AudioFilter}}(x + 44)
     f === :filter_index && return Ptr{Cint}(x + 124)
     return getfield(x, f)
 end
@@ -1334,7 +1334,7 @@ struct SDL_PixelFormat
     palette::Ptr{SDL_Palette}
     BitsPerPixel::Uint8
     BytesPerPixel::Uint8
-    padding::NTuple{2, Uint8}
+    padding::NTuple{2,Uint8}
     Rmask::Uint32
     Gmask::Uint32
     Bmask::Uint32
@@ -1407,24 +1407,24 @@ function SDL_CalculateGammaRamp(gamma, ramp)
     ccall((:SDL_CalculateGammaRamp, libsdl2), Cvoid, (Cfloat, Ptr{Uint16}), gamma, ramp)
 end
 
-struct SDL_Point
+mutable struct SDL_Point
     x::Cint
     y::Cint
 end
 
-struct SDL_FPoint
+mutable struct SDL_FPoint
     x::Cfloat
     y::Cfloat
 end
 
-struct SDL_Rect
+mutable struct SDL_Rect
     x::Cint
     y::Cint
     w::Cint
     h::Cint
 end
 
-struct SDL_FRect
+mutable struct SDL_FRect
     x::Cfloat
     y::Cfloat
     w::Cfloat
@@ -1559,6 +1559,8 @@ end
 function SDL_LoadBMP_RW(src, freesrc)
     ccall((:SDL_LoadBMP_RW, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_RWops}, Cint), src, freesrc)
 end
+
+#SDL_LoadBMP(src::String) = SDL_LoadBMP_RW(src, Int32(1))
 
 function SDL_SaveBMP_RW(surface, dst, freedst)
     ccall((:SDL_SaveBMP_RW, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_RWops}, Cint), surface, dst, freedst)
@@ -2813,7 +2815,7 @@ mutable struct _SDL_Joystick end
 const SDL_Joystick = _SDL_Joystick
 
 struct SDL_JoystickGUID
-    data::NTuple{16, Uint8}
+    data::NTuple{16,Uint8}
 end
 
 const SDL_JoystickID = Sint32
@@ -3022,7 +3024,7 @@ end
 end
 
 struct SDL_GameControllerButtonBind
-    data::NTuple{12, UInt8}
+    data::NTuple{12,UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_GameControllerButtonBind}, f::Symbol)
@@ -3362,7 +3364,7 @@ struct SDL_TextEditingEvent
     type::Uint32
     timestamp::Uint32
     windowID::Uint32
-    text::NTuple{32, Cchar}
+    text::NTuple{32,Cchar}
     start::Sint32
     length::Sint32
 end
@@ -3371,7 +3373,7 @@ struct SDL_TextInputEvent
     type::Uint32
     timestamp::Uint32
     windowID::Uint32
-    text::NTuple{32, Cchar}
+    text::NTuple{32,Cchar}
 end
 
 struct SDL_MouseMotionEvent
@@ -3544,7 +3546,7 @@ struct SDL_SensorEvent
     type::Uint32
     timestamp::Uint32
     which::Sint32
-    data::NTuple{6, Cfloat}
+    data::NTuple{6,Cfloat}
 end
 
 struct SDL_QuitEvent
@@ -3575,7 +3577,7 @@ struct SDL_SysWMEvent
 end
 
 struct SDL_Event
-    data::NTuple{56, UInt8}
+    data::NTuple{56,UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_Event}, f::Symbol)
@@ -3606,7 +3608,7 @@ function Base.getproperty(x::Ptr{SDL_Event}, f::Symbol)
     f === :mgesture && return Ptr{SDL_MultiGestureEvent}(x + 0)
     f === :dgesture && return Ptr{SDL_DollarGestureEvent}(x + 0)
     f === :drop && return Ptr{SDL_DropEvent}(x + 0)
-    f === :padding && return Ptr{NTuple{56, Uint8}}(x + 0)
+    f === :padding && return Ptr{NTuple{56,Uint8}}(x + 0)
     return getfield(x, f)
 end
 
@@ -3621,7 +3623,7 @@ function Base.setproperty!(x::Ptr{SDL_Event}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-const SDL_compile_time_assert_SDL_Event = NTuple{1, Cint}
+const SDL_compile_time_assert_SDL_Event = NTuple{1,Cint}
 
 function SDL_PumpEvents()
     ccall((:SDL_PumpEvents, libsdl2), Cvoid, ())
@@ -3714,7 +3716,7 @@ const SDL_Haptic = _SDL_Haptic
 
 struct SDL_HapticDirection
     type::Uint8
-    dir::NTuple{3, Sint32}
+    dir::NTuple{3,Sint32}
 end
 
 struct SDL_HapticConstant
@@ -3755,12 +3757,12 @@ struct SDL_HapticCondition
     delay::Uint16
     button::Uint16
     interval::Uint16
-    right_sat::NTuple{3, Uint16}
-    left_sat::NTuple{3, Uint16}
-    right_coeff::NTuple{3, Sint16}
-    left_coeff::NTuple{3, Sint16}
-    deadband::NTuple{3, Uint16}
-    center::NTuple{3, Sint16}
+    right_sat::NTuple{3,Uint16}
+    left_sat::NTuple{3,Uint16}
+    right_coeff::NTuple{3,Sint16}
+    left_coeff::NTuple{3,Sint16}
+    deadband::NTuple{3,Uint16}
+    center::NTuple{3,Sint16}
 end
 
 struct SDL_HapticRamp
@@ -3803,7 +3805,7 @@ struct SDL_HapticCustom
 end
 
 struct SDL_HapticEffect
-    data::NTuple{72, UInt8}
+    data::NTuple{72,UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_HapticEffect}, f::Symbol)
@@ -4092,7 +4094,7 @@ end
 end
 
 struct SDL_MessageBoxColorScheme
-    colors::NTuple{5, SDL_MessageBoxColor}
+    colors::NTuple{5,SDL_MessageBoxColor}
 end
 
 struct SDL_MessageBoxData
@@ -4146,7 +4148,7 @@ struct SDL_RendererInfo
     name::Ptr{Cchar}
     flags::Uint32
     num_texture_formats::Uint32
-    texture_formats::NTuple{16, Uint32}
+    texture_formats::NTuple{16,Uint32}
     max_texture_width::Cint
     max_texture_height::Cint
 end
@@ -4169,10 +4171,13 @@ end
     SDL_TEXTUREMODULATE_ALPHA = 2
 end
 
+#const RendererFlip = UInt32
+
 @cenum SDL_RendererFlip::UInt32 begin
     SDL_FLIP_NONE = 0
     SDL_FLIP_HORIZONTAL = 1
     SDL_FLIP_VERTICAL = 2
+    SDL_FLIP_BOTH = 1 | 2
 end
 
 mutable struct SDL_Renderer end
@@ -4552,7 +4557,7 @@ end
 end
 
 struct SDL_WindowShapeParams
-    data::NTuple{4, UInt8}
+    data::NTuple{4,UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_WindowShapeParams}, f::Symbol)
@@ -5414,7 +5419,7 @@ function TTF_GetFontKerningSizeGlyphs(font, previous_ch, ch)
 end
 
 struct __JL_Ctag_245
-    data::NTuple{24, UInt8}
+    data::NTuple{24,UInt8}
 end
 
 function Base.getproperty(x::Ptr{__JL_Ctag_245}, f::Symbol)
@@ -5504,7 +5509,7 @@ function Base.setproperty!(x::Ptr{__JL_Ctag_248}, f::Symbol, v)
 end
 
 struct __JL_Ctag_249
-    data::NTuple{8, UInt8}
+    data::NTuple{8,UInt8}
 end
 
 function Base.getproperty(x::Ptr{__JL_Ctag_249}, f::Symbol)
