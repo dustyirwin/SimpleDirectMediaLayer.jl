@@ -208,7 +208,7 @@ struct SDL_Color
     a::Uint8
 end
 
-struct SDL_Rect
+mutable struct SDL_Rect
     x::Cint
     y::Cint
     w::Cint
@@ -1643,17 +1643,17 @@ function SDL_CalculateGammaRamp(gamma, ramp)
     ccall((:SDL_CalculateGammaRamp, libsdl2), Cvoid, (Cfloat, Ptr{Uint16}), gamma, ramp)
 end
 
-struct SDL_Point
+mutable struct SDL_Point
     x::Cint
     y::Cint
 end
 
-struct SDL_FPoint
+mutable struct SDL_FPoint
     x::Cfloat
     y::Cfloat
 end
 
-struct SDL_FRect
+mutable struct SDL_FRect
     x::Cfloat
     y::Cfloat
     w::Cfloat
@@ -4900,6 +4900,7 @@ end
     SDL_FLIP_NONE = 0
     SDL_FLIP_HORIZONTAL = 1
     SDL_FLIP_VERTICAL = 2
+    SDL_FLIP_BOTH = 1 | 2
 end
 
 mutable struct SDL_Renderer end
