@@ -27,6 +27,305 @@ const SDL_ICONV_EINVAL = reinterpret(Csize_t, -4)
 const SDL_TOUCH_MOUSEID = reinterpret(UInt32, Int32(-1))
 
 
+const Uint32 = UInt32
+
+const Uint8 = UInt8
+
+const Sint8 = Int8
+
+const Sint16 = Int16
+
+const Uint16 = UInt16
+
+const Sint32 = Int32
+
+const Sint64 = Int64
+
+const Uint64 = UInt64
+
+function SDL_memset(dst, c, len)
+    ccall((:SDL_memset, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Cint, Csize_t), dst, c, len)
+end
+
+function SDL_memcpy(dst, src, len)
+    ccall((:SDL_memcpy, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), dst, src, len)
+end
+
+function SDL_iconv_string(tocode, fromcode, inbuf, inbytesleft)
+    ccall((:SDL_iconv_string, libsdl2), Ptr{Cchar}, (Ptr{Cchar}, Ptr{Cchar}, Ptr{Cchar}, Csize_t), tocode, fromcode, inbuf, inbytesleft)
+end
+
+function SDL_strlen(str)
+    ccall((:SDL_strlen, libsdl2), Csize_t, (Ptr{Cchar},), str)
+end
+
+function SDL_wcslen(wstr)
+    ccall((:SDL_wcslen, libsdl2), Csize_t, (Ptr{Cwchar_t},), wstr)
+end
+
+function _SDL_size_mul_overflow_builtin(a, b, ret)
+    ccall((:_SDL_size_mul_overflow_builtin, libsdl2), Cint, (Csize_t, Csize_t, Ptr{Csize_t}), a, b, ret)
+end
+
+function _SDL_size_add_overflow_builtin(a, b, ret)
+    ccall((:_SDL_size_add_overflow_builtin, libsdl2), Cint, (Csize_t, Csize_t, Ptr{Csize_t}), a, b, ret)
+end
+
+struct SDL_AssertData
+    always_ignore::Cint
+    trigger_count::Cuint
+    condition::Ptr{Cchar}
+    filename::Ptr{Cchar}
+    linenum::Cint
+    _function::Ptr{Cchar}
+    next::Ptr{SDL_AssertData}
+end
+
+@cenum SDL_AssertState::UInt32 begin
+    SDL_ASSERTION_RETRY = 0
+    SDL_ASSERTION_BREAK = 1
+    SDL_ASSERTION_ABORT = 2
+    SDL_ASSERTION_IGNORE = 3
+    SDL_ASSERTION_ALWAYS_IGNORE = 4
+end
+
+function SDL_ReportAssertion(arg1, arg2, arg3, arg4)
+    ccall((:SDL_ReportAssertion, libsdl2), SDL_AssertState, (Ptr{SDL_AssertData}, Ptr{Cchar}, Ptr{Cchar}, Cint), arg1, arg2, arg3, arg4)
+end
+
+struct SDL_atomic_t
+    value::Cint
+end
+
+function SDL_AtomicAdd(a, v)
+    ccall((:SDL_AtomicAdd, libsdl2), Cint, (Ptr{SDL_atomic_t}, Cint), a, v)
+end
+
+@cenum SDL_errorcode::UInt32 begin
+    SDL_ENOMEM = 0
+    SDL_EFREAD = 1
+    SDL_EFWRITE = 2
+    SDL_EFSEEK = 3
+    SDL_UNSUPPORTED = 4
+    SDL_LASTERROR = 5
+end
+
+function SDL_Error(code)
+    ccall((:SDL_Error, libsdl2), Cint, (SDL_errorcode,), code)
+end
+
+function SDL_SwapFloat(x)
+    ccall((:SDL_SwapFloat, libsdl2), Cfloat, (Cfloat,), x)
+end
+
+mutable struct SDL_mutex end
+
+function SDL_LockMutex(mutex)
+    ccall((:SDL_LockMutex, libsdl2), Cint, (Ptr{SDL_mutex},), mutex)
+end
+
+function SDL_UnlockMutex(mutex)
+    ccall((:SDL_UnlockMutex, libsdl2), Cint, (Ptr{SDL_mutex},), mutex)
+end
+
+struct __JL_Ctag_475
+    data::NTuple{24, UInt8}
+end
+
+function Base.getproperty(x::Ptr{__JL_Ctag_475}, f::Symbol)
+    f === :stdio && return Ptr{__JL_Ctag_476}(x + 0)
+    f === :mem && return Ptr{__JL_Ctag_477}(x + 0)
+    f === :unknown && return Ptr{__JL_Ctag_478}(x + 0)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_475, f::Symbol)
+    r = Ref{__JL_Ctag_475}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_475}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_475}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct SDL_RWops
+    data::NTuple{72, UInt8}
+end
+
+function Base.getproperty(x::Ptr{SDL_RWops}, f::Symbol)
+    f === :size && return Ptr{Ptr{Cvoid}}(x + 0)
+    f === :seek && return Ptr{Ptr{Cvoid}}(x + 8)
+    f === :read && return Ptr{Ptr{Cvoid}}(x + 16)
+    f === :write && return Ptr{Ptr{Cvoid}}(x + 24)
+    f === :close && return Ptr{Ptr{Cvoid}}(x + 32)
+    f === :type && return Ptr{Uint32}(x + 40)
+    f === :hidden && return Ptr{__JL_Ctag_475}(x + 48)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::SDL_RWops, f::Symbol)
+    r = Ref{SDL_RWops}(x)
+    ptr = Base.unsafe_convert(Ptr{SDL_RWops}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{SDL_RWops}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+const SDL_AudioFormat = Uint16
+
+# typedef void ( SDLCALL * SDL_AudioCallback ) ( void * userdata , Uint8 * stream , int len )
+const SDL_AudioCallback = Ptr{Cvoid}
+
+struct SDL_AudioSpec
+    freq::Cint
+    format::SDL_AudioFormat
+    channels::Uint8
+    silence::Uint8
+    samples::Uint16
+    padding::Uint16
+    size::Uint32
+    callback::SDL_AudioCallback
+    userdata::Ptr{Cvoid}
+end
+
+function SDL_LoadWAV_RW(src, freesrc, spec, audio_buf, audio_len)
+    ccall((:SDL_LoadWAV_RW, libsdl2), Ptr{SDL_AudioSpec}, (Ptr{SDL_RWops}, Cint, Ptr{SDL_AudioSpec}, Ptr{Ptr{Uint8}}, Ptr{Uint32}), src, freesrc, spec, audio_buf, audio_len)
+end
+
+function SDL_RWFromFile(file, mode)
+    ccall((:SDL_RWFromFile, libsdl2), Ptr{SDL_RWops}, (Ptr{Cchar}, Ptr{Cchar}), file, mode)
+end
+
+struct SDL_Color
+    r::Uint8
+    g::Uint8
+    b::Uint8
+    a::Uint8
+end
+
+struct SDL_Rect
+    x::Cint
+    y::Cint
+    w::Cint
+    h::Cint
+end
+
+mutable struct SDL_BlitMap end
+
+struct SDL_Surface
+    flags::Uint32
+    format::Ptr{Cvoid} # format::Ptr{SDL_PixelFormat}
+    w::Cint
+    h::Cint
+    pitch::Cint
+    pixels::Ptr{Cvoid}
+    userdata::Ptr{Cvoid}
+    locked::Cint
+    list_blitmap::Ptr{Cvoid}
+    clip_rect::SDL_Rect
+    map::Ptr{SDL_BlitMap}
+    refcount::Cint
+end
+
+function Base.getproperty(x::SDL_Surface, f::Symbol)
+    f === :format && return Ptr{SDL_PixelFormat}(getfield(x, f))
+    return getfield(x, f)
+end
+
+function SDL_LoadBMP_RW(src, freesrc)
+    ccall((:SDL_LoadBMP_RW, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_RWops}, Cint), src, freesrc)
+end
+
+function SDL_SaveBMP_RW(surface, dst, freedst)
+    ccall((:SDL_SaveBMP_RW, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_RWops}, Cint), surface, dst, freedst)
+end
+
+function SDL_UpperBlit(src, srcrect, dst, dstrect)
+    ccall((:SDL_UpperBlit, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Ptr{SDL_Surface}, Ptr{SDL_Rect}), src, srcrect, dst, dstrect)
+end
+
+function SDL_UpperBlitScaled(src, srcrect, dst, dstrect)
+    ccall((:SDL_UpperBlitScaled, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Ptr{SDL_Surface}, Ptr{SDL_Rect}), src, srcrect, dst, dstrect)
+end
+
+function SDL_GameControllerAddMappingsFromRW(rw, freerw)
+    ccall((:SDL_GameControllerAddMappingsFromRW, libsdl2), Cint, (Ptr{SDL_RWops}, Cint), rw, freerw)
+end
+
+function SDL_PumpEvents()
+    ccall((:SDL_PumpEvents, libsdl2), Cvoid, ())
+end
+
+struct SDL_Event
+    data::NTuple{56, UInt8}
+end
+
+function Base.getproperty(x::Ptr{SDL_Event}, f::Symbol)
+    f === :type && return Ptr{Uint32}(x + 0)
+    f === :common && return Ptr{SDL_CommonEvent}(x + 0)
+    f === :display && return Ptr{SDL_DisplayEvent}(x + 0)
+    f === :window && return Ptr{SDL_WindowEvent}(x + 0)
+    f === :key && return Ptr{SDL_KeyboardEvent}(x + 0)
+    f === :edit && return Ptr{SDL_TextEditingEvent}(x + 0)
+    f === :editExt && return Ptr{SDL_TextEditingExtEvent}(x + 0)
+    f === :text && return Ptr{SDL_TextInputEvent}(x + 0)
+    f === :motion && return Ptr{SDL_MouseMotionEvent}(x + 0)
+    f === :button && return Ptr{SDL_MouseButtonEvent}(x + 0)
+    f === :wheel && return Ptr{SDL_MouseWheelEvent}(x + 0)
+    f === :jaxis && return Ptr{SDL_JoyAxisEvent}(x + 0)
+    f === :jball && return Ptr{SDL_JoyBallEvent}(x + 0)
+    f === :jhat && return Ptr{SDL_JoyHatEvent}(x + 0)
+    f === :jbutton && return Ptr{SDL_JoyButtonEvent}(x + 0)
+    f === :jdevice && return Ptr{SDL_JoyDeviceEvent}(x + 0)
+    f === :jbattery && return Ptr{SDL_JoyBatteryEvent}(x + 0)
+    f === :caxis && return Ptr{SDL_ControllerAxisEvent}(x + 0)
+    f === :cbutton && return Ptr{SDL_ControllerButtonEvent}(x + 0)
+    f === :cdevice && return Ptr{SDL_ControllerDeviceEvent}(x + 0)
+    f === :ctouchpad && return Ptr{SDL_ControllerTouchpadEvent}(x + 0)
+    f === :csensor && return Ptr{SDL_ControllerSensorEvent}(x + 0)
+    f === :adevice && return Ptr{SDL_AudioDeviceEvent}(x + 0)
+    f === :sensor && return Ptr{SDL_SensorEvent}(x + 0)
+    f === :quit && return Ptr{SDL_QuitEvent}(x + 0)
+    f === :user && return Ptr{SDL_UserEvent}(x + 0)
+    f === :syswm && return Ptr{SDL_SysWMEvent}(x + 0)
+    f === :tfinger && return Ptr{SDL_TouchFingerEvent}(x + 0)
+    f === :mgesture && return Ptr{SDL_MultiGestureEvent}(x + 0)
+    f === :dgesture && return Ptr{SDL_DollarGestureEvent}(x + 0)
+    f === :drop && return Ptr{SDL_DropEvent}(x + 0)
+    f === :padding && return Ptr{NTuple{56, Uint8}}(x + 0)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::SDL_Event, f::Symbol)
+    r = Ref{SDL_Event}(x)
+    ptr = Base.unsafe_convert(Ptr{SDL_Event}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{SDL_Event}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+@cenum SDL_eventaction::UInt32 begin
+    SDL_ADDEVENT = 0
+    SDL_PEEKEVENT = 1
+    SDL_GETEVENT = 2
+end
+
+function SDL_PeepEvents(events, numevents, action, minType, maxType)
+    ccall((:SDL_PeepEvents, libsdl2), Cint, (Ptr{SDL_Event}, Cint, SDL_eventaction, Uint32, Uint32), events, numevents, action, minType, maxType)
+end
+
+function SDL_EventState(type, state)
+    ccall((:SDL_EventState, libsdl2), Uint8, (Uint32, Cint), type, state)
+end
+
 function SDL_GetPlatform()
     ccall((:SDL_GetPlatform, libsdl2), Ptr{Cchar}, ())
 end
@@ -36,43 +335,9 @@ end
     SDL_TRUE = 1
 end
 
-const Sint8 = Int8
-
-const Uint8 = UInt8
-
-const Sint16 = Int16
-
-const Uint16 = UInt16
-
-const Sint32 = Int32
-
-const Uint32 = UInt32
-
-const Sint64 = Int64
-
-const Uint64 = UInt64
-
-const SDL_compile_time_assert_uint8 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_sint8 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_uint16 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_sint16 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_uint32 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_sint32 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_uint64 = NTuple{1,Cint}
-
-const SDL_compile_time_assert_sint64 = NTuple{1,Cint}
-
 @cenum SDL_DUMMY_ENUM::UInt32 begin
     DUMMY_ENUM_VALUE = 0
 end
-
-const SDL_compile_time_assert_enum = NTuple{1,Cint}
 
 function SDL_malloc(size)
     ccall((:SDL_malloc, libsdl2), Ptr{Cvoid}, (Csize_t,), size)
@@ -102,6 +367,10 @@ const SDL_realloc_func = Ptr{Cvoid}
 # typedef void ( SDLCALL * SDL_free_func ) ( void * mem )
 const SDL_free_func = Ptr{Cvoid}
 
+function SDL_GetOriginalMemoryFunctions(malloc_func, calloc_func, realloc_func, free_func)
+    ccall((:SDL_GetOriginalMemoryFunctions, libsdl2), Cvoid, (Ptr{SDL_malloc_func}, Ptr{SDL_calloc_func}, Ptr{SDL_realloc_func}, Ptr{SDL_free_func}), malloc_func, calloc_func, realloc_func, free_func)
+end
+
 function SDL_GetMemoryFunctions(malloc_func, calloc_func, realloc_func, free_func)
     ccall((:SDL_GetMemoryFunctions, libsdl2), Cvoid, (Ptr{SDL_malloc_func}, Ptr{SDL_calloc_func}, Ptr{SDL_realloc_func}, Ptr{SDL_free_func}), malloc_func, calloc_func, realloc_func, free_func)
 end
@@ -126,12 +395,40 @@ function SDL_qsort(base, nmemb, size, compare)
     ccall((:SDL_qsort, libsdl2), Cvoid, (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Cvoid}), base, nmemb, size, compare)
 end
 
+function SDL_bsearch(key, base, nmemb, size, compare)
+    ccall((:SDL_bsearch, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Cvoid}), key, base, nmemb, size, compare)
+end
+
 function SDL_abs(x)
     ccall((:SDL_abs, libsdl2), Cint, (Cint,), x)
 end
 
+function SDL_isalpha(x)
+    ccall((:SDL_isalpha, libsdl2), Cint, (Cint,), x)
+end
+
+function SDL_isalnum(x)
+    ccall((:SDL_isalnum, libsdl2), Cint, (Cint,), x)
+end
+
+function SDL_isblank(x)
+    ccall((:SDL_isblank, libsdl2), Cint, (Cint,), x)
+end
+
+function SDL_iscntrl(x)
+    ccall((:SDL_iscntrl, libsdl2), Cint, (Cint,), x)
+end
+
 function SDL_isdigit(x)
     ccall((:SDL_isdigit, libsdl2), Cint, (Cint,), x)
+end
+
+function SDL_isxdigit(x)
+    ccall((:SDL_isxdigit, libsdl2), Cint, (Cint,), x)
+end
+
+function SDL_ispunct(x)
+    ccall((:SDL_ispunct, libsdl2), Cint, (Cint,), x)
 end
 
 function SDL_isspace(x)
@@ -146,6 +443,14 @@ function SDL_islower(x)
     ccall((:SDL_islower, libsdl2), Cint, (Cint,), x)
 end
 
+function SDL_isprint(x)
+    ccall((:SDL_isprint, libsdl2), Cint, (Cint,), x)
+end
+
+function SDL_isgraph(x)
+    ccall((:SDL_isgraph, libsdl2), Cint, (Cint,), x)
+end
+
 function SDL_toupper(x)
     ccall((:SDL_toupper, libsdl2), Cint, (Cint,), x)
 end
@@ -154,16 +459,16 @@ function SDL_tolower(x)
     ccall((:SDL_tolower, libsdl2), Cint, (Cint,), x)
 end
 
-function SDL_memset(dst, c, len)
-    ccall((:SDL_memset, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Cint, Csize_t), dst, c, len)
+function SDL_crc16(crc, data, len)
+    ccall((:SDL_crc16, libsdl2), Uint16, (Uint16, Ptr{Cvoid}, Csize_t), crc, data, len)
+end
+
+function SDL_crc32(crc, data, len)
+    ccall((:SDL_crc32, libsdl2), Uint32, (Uint32, Ptr{Cvoid}, Csize_t), crc, data, len)
 end
 
 function SDL_memset4(dst, val, dwords)
     ccall((:SDL_memset4, libsdl2), Cvoid, (Ptr{Cvoid}, Uint32, Csize_t), dst, val, dwords)
-end
-
-function SDL_memcpy(dst, src, len)
-    ccall((:SDL_memcpy, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), dst, src, len)
 end
 
 function SDL_memmove(dst, src, len)
@@ -172,10 +477,6 @@ end
 
 function SDL_memcmp(s1, s2, len)
     ccall((:SDL_memcmp, libsdl2), Cint, (Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), s1, s2, len)
-end
-
-function SDL_wcslen(wstr)
-    ccall((:SDL_wcslen, libsdl2), Csize_t, (Ptr{Cwchar_t},), wstr)
 end
 
 function SDL_wcslcpy(dst, src, maxlen)
@@ -202,8 +503,12 @@ function SDL_wcsncmp(str1, str2, maxlen)
     ccall((:SDL_wcsncmp, libsdl2), Cint, (Ptr{Cwchar_t}, Ptr{Cwchar_t}, Csize_t), str1, str2, maxlen)
 end
 
-function SDL_strlen(str)
-    ccall((:SDL_strlen, libsdl2), Csize_t, (Ptr{Cchar},), str)
+function SDL_wcscasecmp(str1, str2)
+    ccall((:SDL_wcscasecmp, libsdl2), Cint, (Ptr{Cwchar_t}, Ptr{Cwchar_t}), str1, str2)
+end
+
+function SDL_wcsncasecmp(str1, str2, len)
+    ccall((:SDL_wcsncasecmp, libsdl2), Cint, (Ptr{Cwchar_t}, Ptr{Cwchar_t}, Csize_t), str1, str2, len)
 end
 
 function SDL_strlcpy(dst, src, maxlen)
@@ -252,6 +557,10 @@ end
 
 function SDL_utf8strlen(str)
     ccall((:SDL_utf8strlen, libsdl2), Csize_t, (Ptr{Cchar},), str)
+end
+
+function SDL_utf8strnlen(str, bytes)
+    ccall((:SDL_utf8strnlen, libsdl2), Csize_t, (Ptr{Cchar}, Csize_t), str, bytes)
 end
 
 function SDL_itoa(value, str, radix)
@@ -346,12 +655,12 @@ function SDL_atanf(x)
     ccall((:SDL_atanf, libsdl2), Cfloat, (Cfloat,), x)
 end
 
-function SDL_atan2(x, y)
-    ccall((:SDL_atan2, libsdl2), Cdouble, (Cdouble, Cdouble), x, y)
+function SDL_atan2(y, x)
+    ccall((:SDL_atan2, libsdl2), Cdouble, (Cdouble, Cdouble), y, x)
 end
 
-function SDL_atan2f(x, y)
-    ccall((:SDL_atan2f, libsdl2), Cfloat, (Cfloat, Cfloat), x, y)
+function SDL_atan2f(y, x)
+    ccall((:SDL_atan2f, libsdl2), Cfloat, (Cfloat, Cfloat), y, x)
 end
 
 function SDL_ceil(x)
@@ -402,6 +711,14 @@ function SDL_floorf(x)
     ccall((:SDL_floorf, libsdl2), Cfloat, (Cfloat,), x)
 end
 
+function SDL_trunc(x)
+    ccall((:SDL_trunc, libsdl2), Cdouble, (Cdouble,), x)
+end
+
+function SDL_truncf(x)
+    ccall((:SDL_truncf, libsdl2), Cfloat, (Cfloat,), x)
+end
+
 function SDL_fmod(x, y)
     ccall((:SDL_fmod, libsdl2), Cdouble, (Cdouble, Cdouble), x, y)
 end
@@ -432,6 +749,22 @@ end
 
 function SDL_powf(x, y)
     ccall((:SDL_powf, libsdl2), Cfloat, (Cfloat, Cfloat), x, y)
+end
+
+function SDL_round(x)
+    ccall((:SDL_round, libsdl2), Cdouble, (Cdouble,), x)
+end
+
+function SDL_roundf(x)
+    ccall((:SDL_roundf, libsdl2), Cfloat, (Cfloat,), x)
+end
+
+function SDL_lround(x)
+    ccall((:SDL_lround, libsdl2), Clong, (Cdouble,), x)
+end
+
+function SDL_lroundf(x)
+    ccall((:SDL_lroundf, libsdl2), Clong, (Cfloat,), x)
 end
 
 function SDL_scalbn(x, n)
@@ -482,10 +815,6 @@ function SDL_iconv(cd, inbuf, inbytesleft, outbuf, outbytesleft)
     ccall((:SDL_iconv, libsdl2), Csize_t, (SDL_iconv_t, Ptr{Ptr{Cchar}}, Ptr{Csize_t}, Ptr{Ptr{Cchar}}, Ptr{Csize_t}), cd, inbuf, inbytesleft, outbuf, outbytesleft)
 end
 
-function SDL_iconv_string(tocode, fromcode, inbuf, inbytesleft)
-    ccall((:SDL_iconv_string, libsdl2), Ptr{Cchar}, (Ptr{Cchar}, Ptr{Cchar}, Ptr{Cchar}, Csize_t), tocode, fromcode, inbuf, inbytesleft)
-end
-
 function SDL_memcpy4(dst, src, dwords)
     ccall((:SDL_memcpy4, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), dst, src, dwords)
 end
@@ -499,28 +828,6 @@ end
 
 function SDL_SetMainReady()
     ccall((:SDL_SetMainReady, libsdl2), Cvoid, ())
-end
-
-@cenum SDL_AssertState::UInt32 begin
-    SDL_ASSERTION_RETRY = 0
-    SDL_ASSERTION_BREAK = 1
-    SDL_ASSERTION_ABORT = 2
-    SDL_ASSERTION_IGNORE = 3
-    SDL_ASSERTION_ALWAYS_IGNORE = 4
-end
-
-struct SDL_AssertData
-    always_ignore::Cint
-    trigger_count::Cuint
-    condition::Ptr{Cchar}
-    filename::Ptr{Cchar}
-    linenum::Cint
-    _function::Ptr{Cchar}
-    next::Ptr{SDL_AssertData}
-end
-
-function SDL_ReportAssertion(arg1, arg2, arg3, arg4)
-    ccall((:SDL_ReportAssertion, libsdl2), SDL_AssertState, (Ptr{SDL_AssertData}, Ptr{Cchar}, Ptr{Cchar}, Cint), arg1, arg2, arg3, arg4)
 end
 
 # typedef SDL_AssertState ( SDLCALL * SDL_AssertionHandler ) ( const SDL_AssertData * data , void * userdata )
@@ -568,10 +875,6 @@ function SDL_MemoryBarrierAcquireFunction()
     ccall((:SDL_MemoryBarrierAcquireFunction, libsdl2), Cvoid, ())
 end
 
-struct SDL_atomic_t
-    value::Cint
-end
-
 function SDL_AtomicCAS(a, oldval, newval)
     ccall((:SDL_AtomicCAS, libsdl2), SDL_bool, (Ptr{SDL_atomic_t}, Cint, Cint), a, oldval, newval)
 end
@@ -582,10 +885,6 @@ end
 
 function SDL_AtomicGet(a)
     ccall((:SDL_AtomicGet, libsdl2), Cint, (Ptr{SDL_atomic_t},), a)
-end
-
-function SDL_AtomicAdd(a, v)
-    ccall((:SDL_AtomicAdd, libsdl2), Cint, (Ptr{SDL_atomic_t}, Cint), a, v)
 end
 
 function SDL_AtomicCASPtr(a, oldval, newval)
@@ -604,55 +903,20 @@ function SDL_GetError()
     ccall((:SDL_GetError, libsdl2), Ptr{Cchar}, ())
 end
 
+function SDL_GetErrorMsg(errstr, maxlen)
+    ccall((:SDL_GetErrorMsg, libsdl2), Ptr{Cchar}, (Ptr{Cchar}, Cint), errstr, maxlen)
+end
+
 function SDL_ClearError()
     ccall((:SDL_ClearError, libsdl2), Cvoid, ())
 end
-
-@cenum SDL_errorcode::UInt32 begin
-    SDL_ENOMEM = 0
-    SDL_EFREAD = 1
-    SDL_EFWRITE = 2
-    SDL_EFSEEK = 3
-    SDL_UNSUPPORTED = 4
-    SDL_LASTERROR = 5
-end
-
-function SDL_Error(code)
-    ccall((:SDL_Error, libsdl2), Cint, (SDL_errorcode,), code)
-end
-
-function SDL_Swap16(x)
-    ccall((:SDL_Swap16, libsdl2), Uint16, (Uint16,), x)
-end
-
-function SDL_Swap32(x)
-    ccall((:SDL_Swap32, libsdl2), Uint32, (Uint32,), x)
-end
-
-function SDL_Swap64(x)
-    ccall((:SDL_Swap64, libsdl2), Uint64, (Uint64,), x)
-end
-
-function SDL_SwapFloat(x)
-    ccall((:SDL_SwapFloat, libsdl2), Cfloat, (Cfloat,), x)
-end
-
-mutable struct SDL_mutex end
 
 function SDL_CreateMutex()
     ccall((:SDL_CreateMutex, libsdl2), Ptr{SDL_mutex}, ())
 end
 
-function SDL_LockMutex(mutex)
-    ccall((:SDL_LockMutex, libsdl2), Cint, (Ptr{SDL_mutex},), mutex)
-end
-
 function SDL_TryLockMutex(mutex)
     ccall((:SDL_TryLockMutex, libsdl2), Cint, (Ptr{SDL_mutex},), mutex)
-end
-
-function SDL_UnlockMutex(mutex)
-    ccall((:SDL_UnlockMutex, libsdl2), Cint, (Ptr{SDL_mutex},), mutex)
 end
 
 function SDL_DestroyMutex(mutex)
@@ -777,34 +1041,8 @@ function SDL_TLSSet(id, value, destructor)
     ccall((:SDL_TLSSet, libsdl2), Cint, (SDL_TLSID, Ptr{Cvoid}, Ptr{Cvoid}), id, value, destructor)
 end
 
-struct SDL_RWops
-    data::NTuple{72,UInt8}
-end
-
-function Base.getproperty(x::Ptr{SDL_RWops}, f::Symbol)
-    f === :size && return Ptr{Ptr{Cvoid}}(x + 0)
-    f === :seek && return Ptr{Ptr{Cvoid}}(x + 8)
-    f === :read && return Ptr{Ptr{Cvoid}}(x + 16)
-    f === :write && return Ptr{Ptr{Cvoid}}(x + 24)
-    f === :close && return Ptr{Ptr{Cvoid}}(x + 32)
-    f === :type && return Ptr{Uint32}(x + 40)
-    f === :hidden && return Ptr{__JL_Ctag_245}(x + 48)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::SDL_RWops, f::Symbol)
-    r = Ref{SDL_RWops}(x)
-    ptr = Base.unsafe_convert(Ptr{SDL_RWops}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{SDL_RWops}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-function SDL_RWFromFile(file, mode)
-    ccall((:SDL_RWFromFile, libsdl2), Ptr{SDL_RWops}, (Ptr{Cchar}, Ptr{Cchar}), file, mode)
+function SDL_TLSCleanup()
+    ccall((:SDL_TLSCleanup, libsdl2), Cvoid, ())
 end
 
 function SDL_RWFromFP(fp, autoclose)
@@ -915,28 +1153,11 @@ function SDL_WriteBE64(dst, value)
     ccall((:SDL_WriteBE64, libsdl2), Csize_t, (Ptr{SDL_RWops}, Uint64), dst, value)
 end
 
-const SDL_AudioFormat = Uint16
-
-# typedef void ( SDLCALL * SDL_AudioCallback ) ( void * userdata , Uint8 * stream , int len )
-const SDL_AudioCallback = Ptr{Cvoid}
-
-struct SDL_AudioSpec
-    freq::Cint
-    format::SDL_AudioFormat
-    channels::Uint8
-    silence::Uint8
-    samples::Uint16
-    padding::Uint16
-    size::Uint32
-    callback::SDL_AudioCallback
-    userdata::Ptr{Cvoid}
-end
-
 # typedef void ( SDLCALL * SDL_AudioFilter ) ( struct SDL_AudioCVT * cvt , SDL_AudioFormat format )
 const SDL_AudioFilter = Ptr{Cvoid}
 
 struct SDL_AudioCVT
-    data::NTuple{128,UInt8}
+    data::NTuple{128, UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_AudioCVT}, f::Symbol)
@@ -949,7 +1170,7 @@ function Base.getproperty(x::Ptr{SDL_AudioCVT}, f::Symbol)
     f === :len_cvt && return Ptr{Cint}(x + 28)
     f === :len_mult && return Ptr{Cint}(x + 32)
     f === :len_ratio && return Ptr{Cdouble}(x + 36)
-    f === :filters && return Ptr{NTuple{10,SDL_AudioFilter}}(x + 44)
+    f === :filters && return Ptr{NTuple{10, SDL_AudioFilter}}(x + 44)
     f === :filter_index && return Ptr{Cint}(x + 124)
     return getfield(x, f)
 end
@@ -999,6 +1220,14 @@ function SDL_GetAudioDeviceName(index, iscapture)
     ccall((:SDL_GetAudioDeviceName, libsdl2), Ptr{Cchar}, (Cint, Cint), index, iscapture)
 end
 
+function SDL_GetAudioDeviceSpec(index, iscapture, spec)
+    ccall((:SDL_GetAudioDeviceSpec, libsdl2), Cint, (Cint, Cint, Ptr{SDL_AudioSpec}), index, iscapture, spec)
+end
+
+function SDL_GetDefaultAudioInfo(name, spec, iscapture)
+    ccall((:SDL_GetDefaultAudioInfo, libsdl2), Cint, (Ptr{Ptr{Cchar}}, Ptr{SDL_AudioSpec}, Cint), name, spec, iscapture)
+end
+
 function SDL_OpenAudioDevice(device, iscapture, desired, obtained, allowed_changes)
     ccall((:SDL_OpenAudioDevice, libsdl2), SDL_AudioDeviceID, (Ptr{Cchar}, Cint, Ptr{SDL_AudioSpec}, Ptr{SDL_AudioSpec}, Cint), device, iscapture, desired, obtained, allowed_changes)
 end
@@ -1023,10 +1252,6 @@ end
 
 function SDL_PauseAudioDevice(dev, pause_on)
     ccall((:SDL_PauseAudioDevice, libsdl2), Cvoid, (SDL_AudioDeviceID, Cint), dev, pause_on)
-end
-
-function SDL_LoadWAV_RW(src, freesrc, spec, audio_buf, audio_len)
-    ccall((:SDL_LoadWAV_RW, libsdl2), Ptr{SDL_AudioSpec}, (Ptr{SDL_RWops}, Cint, Ptr{SDL_AudioSpec}, Ptr{Ptr{Uint8}}, Ptr{Uint32}), src, freesrc, spec, audio_buf, audio_len)
 end
 
 function SDL_FreeWAV(audio_buf)
@@ -1197,6 +1422,14 @@ function SDL_HasNEON()
     ccall((:SDL_HasNEON, libsdl2), SDL_bool, ())
 end
 
+function SDL_HasLSX()
+    ccall((:SDL_HasLSX, libsdl2), SDL_bool, ())
+end
+
+function SDL_HasLASX()
+    ccall((:SDL_HasLASX, libsdl2), SDL_bool, ())
+end
+
 function SDL_GetSystemRAM()
     ccall((:SDL_GetSystemRAM, libsdl2), Cint, ())
 end
@@ -1207,6 +1440,10 @@ end
 
 function SDL_SIMDAlloc(len)
     ccall((:SDL_SIMDAlloc, libsdl2), Ptr{Cvoid}, (Csize_t,), len)
+end
+
+function SDL_SIMDRealloc(mem, len)
+    ccall((:SDL_SIMDRealloc, libsdl2), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), mem, len)
 end
 
 function SDL_SIMDFree(ptr)
@@ -1276,9 +1513,13 @@ end
     SDL_PIXELFORMAT_INDEX4MSB = 304088064
     SDL_PIXELFORMAT_INDEX8 = 318769153
     SDL_PIXELFORMAT_RGB332 = 336660481
+    SDL_PIXELFORMAT_XRGB4444 = 353504258
     SDL_PIXELFORMAT_RGB444 = 353504258
+    SDL_PIXELFORMAT_XBGR4444 = 357698562
     SDL_PIXELFORMAT_BGR444 = 357698562
+    SDL_PIXELFORMAT_XRGB1555 = 353570562
     SDL_PIXELFORMAT_RGB555 = 353570562
+    SDL_PIXELFORMAT_XBGR1555 = 357764866
     SDL_PIXELFORMAT_BGR555 = 357764866
     SDL_PIXELFORMAT_ARGB4444 = 355602434
     SDL_PIXELFORMAT_RGBA4444 = 356651010
@@ -1292,8 +1533,10 @@ end
     SDL_PIXELFORMAT_BGR565 = 357896194
     SDL_PIXELFORMAT_RGB24 = 386930691
     SDL_PIXELFORMAT_BGR24 = 390076419
+    SDL_PIXELFORMAT_XRGB8888 = 370546692
     SDL_PIXELFORMAT_RGB888 = 370546692
     SDL_PIXELFORMAT_RGBX8888 = 371595268
+    SDL_PIXELFORMAT_XBGR8888 = 374740996
     SDL_PIXELFORMAT_BGR888 = 374740996
     SDL_PIXELFORMAT_BGRX8888 = 375789572
     SDL_PIXELFORMAT_ARGB8888 = 372645892
@@ -1315,13 +1558,6 @@ end
     SDL_PIXELFORMAT_EXTERNAL_OES = 542328143
 end
 
-struct SDL_Color
-    r::Uint8
-    g::Uint8
-    b::Uint8
-    a::Uint8
-end
-
 struct SDL_Palette
     ncolors::Cint
     colors::Ptr{SDL_Color}
@@ -1334,7 +1570,7 @@ struct SDL_PixelFormat
     palette::Ptr{SDL_Palette}
     BitsPerPixel::Uint8
     BytesPerPixel::Uint8
-    padding::NTuple{2,Uint8}
+    padding::NTuple{2, Uint8}
     Rmask::Uint32
     Gmask::Uint32
     Bmask::Uint32
@@ -1407,24 +1643,17 @@ function SDL_CalculateGammaRamp(gamma, ramp)
     ccall((:SDL_CalculateGammaRamp, libsdl2), Cvoid, (Cfloat, Ptr{Uint16}), gamma, ramp)
 end
 
-mutable struct SDL_Point
+struct SDL_Point
     x::Cint
     y::Cint
 end
 
-mutable struct SDL_FPoint
+struct SDL_FPoint
     x::Cfloat
     y::Cfloat
 end
 
-mutable struct SDL_Rect
-    x::Cint
-    y::Cint
-    w::Cint
-    h::Cint
-end
-
-mutable struct SDL_FRect
+struct SDL_FRect
     x::Cfloat
     y::Cfloat
     w::Cfloat
@@ -1463,6 +1692,42 @@ function SDL_IntersectRectAndLine(rect, X1, Y1, X2, Y2)
     ccall((:SDL_IntersectRectAndLine, libsdl2), SDL_bool, (Ptr{SDL_Rect}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), rect, X1, Y1, X2, Y2)
 end
 
+function SDL_PointInFRect(p, r)
+    ccall((:SDL_PointInFRect, libsdl2), SDL_bool, (Ptr{SDL_FPoint}, Ptr{SDL_FRect}), p, r)
+end
+
+function SDL_FRectEmpty(r)
+    ccall((:SDL_FRectEmpty, libsdl2), SDL_bool, (Ptr{SDL_FRect},), r)
+end
+
+function SDL_FRectEqualsEpsilon(a, b, epsilon)
+    ccall((:SDL_FRectEqualsEpsilon, libsdl2), SDL_bool, (Ptr{SDL_FRect}, Ptr{SDL_FRect}, Cfloat), a, b, epsilon)
+end
+
+function SDL_FRectEquals(a, b)
+    ccall((:SDL_FRectEquals, libsdl2), SDL_bool, (Ptr{SDL_FRect}, Ptr{SDL_FRect}), a, b)
+end
+
+function SDL_HasIntersectionF(A, B)
+    ccall((:SDL_HasIntersectionF, libsdl2), SDL_bool, (Ptr{SDL_FRect}, Ptr{SDL_FRect}), A, B)
+end
+
+function SDL_IntersectFRect(A, B, result)
+    ccall((:SDL_IntersectFRect, libsdl2), SDL_bool, (Ptr{SDL_FRect}, Ptr{SDL_FRect}, Ptr{SDL_FRect}), A, B, result)
+end
+
+function SDL_UnionFRect(A, B, result)
+    ccall((:SDL_UnionFRect, libsdl2), Cvoid, (Ptr{SDL_FRect}, Ptr{SDL_FRect}, Ptr{SDL_FRect}), A, B, result)
+end
+
+function SDL_EncloseFPoints(points, count, clip, result)
+    ccall((:SDL_EncloseFPoints, libsdl2), SDL_bool, (Ptr{SDL_FPoint}, Cint, Ptr{SDL_FRect}, Ptr{SDL_FRect}), points, count, clip, result)
+end
+
+function SDL_IntersectFRectAndLine(rect, X1, Y1, X2, Y2)
+    ccall((:SDL_IntersectFRectAndLine, libsdl2), SDL_bool, (Ptr{SDL_FRect}, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}), rect, X1, Y1, X2, Y2)
+end
+
 @cenum SDL_BlendMode::UInt32 begin
     SDL_BLENDMODE_NONE = 0
     SDL_BLENDMODE_BLEND = 1
@@ -1495,23 +1760,6 @@ end
 
 function SDL_ComposeCustomBlendMode(srcColorFactor, dstColorFactor, colorOperation, srcAlphaFactor, dstAlphaFactor, alphaOperation)
     ccall((:SDL_ComposeCustomBlendMode, libsdl2), SDL_BlendMode, (SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation, SDL_BlendFactor, SDL_BlendFactor, SDL_BlendOperation), srcColorFactor, dstColorFactor, colorOperation, srcAlphaFactor, dstAlphaFactor, alphaOperation)
-end
-
-mutable struct SDL_BlitMap end
-
-struct SDL_Surface
-    flags::Uint32
-    format::Ptr{SDL_PixelFormat}
-    w::Cint
-    h::Cint
-    pitch::Cint
-    pixels::Ptr{Cvoid}
-    userdata::Ptr{Cvoid}
-    locked::Cint
-    lock_data::Ptr{Cvoid}
-    clip_rect::SDL_Rect
-    map::Ptr{SDL_BlitMap}
-    refcount::Cint
 end
 
 # typedef int ( SDLCALL * SDL_blit ) ( struct SDL_Surface * src , SDL_Rect * srcrect , struct SDL_Surface * dst , SDL_Rect * dstrect )
@@ -1556,18 +1804,12 @@ function SDL_UnlockSurface(surface)
     ccall((:SDL_UnlockSurface, libsdl2), Cvoid, (Ptr{SDL_Surface},), surface)
 end
 
-function SDL_LoadBMP_RW(src, freesrc)
-    ccall((:SDL_LoadBMP_RW, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_RWops}, Cint), src, freesrc)
-end
-
-#SDL_LoadBMP(src::String) = SDL_LoadBMP_RW(src, Int32(1))
-
-function SDL_SaveBMP_RW(surface, dst, freedst)
-    ccall((:SDL_SaveBMP_RW, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_RWops}, Cint), surface, dst, freedst)
-end
-
 function SDL_SetSurfaceRLE(surface, flag)
     ccall((:SDL_SetSurfaceRLE, libsdl2), Cint, (Ptr{SDL_Surface}, Cint), surface, flag)
+end
+
+function SDL_HasSurfaceRLE(surface)
+    ccall((:SDL_HasSurfaceRLE, libsdl2), SDL_bool, (Ptr{SDL_Surface},), surface)
 end
 
 function SDL_SetColorKey(surface, flag, key)
@@ -1630,16 +1872,16 @@ function SDL_ConvertPixels(width, height, src_format, src, src_pitch, dst_format
     ccall((:SDL_ConvertPixels, libsdl2), Cint, (Cint, Cint, Uint32, Ptr{Cvoid}, Cint, Uint32, Ptr{Cvoid}, Cint), width, height, src_format, src, src_pitch, dst_format, dst, dst_pitch)
 end
 
+function SDL_PremultiplyAlpha(width, height, src_format, src, src_pitch, dst_format, dst, dst_pitch)
+    ccall((:SDL_PremultiplyAlpha, libsdl2), Cint, (Cint, Cint, Uint32, Ptr{Cvoid}, Cint, Uint32, Ptr{Cvoid}, Cint), width, height, src_format, src, src_pitch, dst_format, dst, dst_pitch)
+end
+
 function SDL_FillRect(dst, rect, color)
     ccall((:SDL_FillRect, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Uint32), dst, rect, color)
 end
 
 function SDL_FillRects(dst, rects, count, color)
     ccall((:SDL_FillRects, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Cint, Uint32), dst, rects, count, color)
-end
-
-function SDL_UpperBlit(src, srcrect, dst, dstrect)
-    ccall((:SDL_UpperBlit, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Ptr{SDL_Surface}, Ptr{SDL_Rect}), src, srcrect, dst, dstrect)
 end
 
 function SDL_LowerBlit(src, srcrect, dst, dstrect)
@@ -1650,8 +1892,8 @@ function SDL_SoftStretch(src, srcrect, dst, dstrect)
     ccall((:SDL_SoftStretch, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Ptr{SDL_Surface}, Ptr{SDL_Rect}), src, srcrect, dst, dstrect)
 end
 
-function SDL_UpperBlitScaled(src, srcrect, dst, dstrect)
-    ccall((:SDL_UpperBlitScaled, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Ptr{SDL_Surface}, Ptr{SDL_Rect}), src, srcrect, dst, dstrect)
+function SDL_SoftStretchLinear(src, srcrect, dst, dstrect)
+    ccall((:SDL_SoftStretchLinear, libsdl2), Cint, (Ptr{SDL_Surface}, Ptr{SDL_Rect}, Ptr{SDL_Surface}, Ptr{SDL_Rect}), src, srcrect, dst, dstrect)
 end
 
 function SDL_LowerBlitScaled(src, srcrect, dst, dstrect)
@@ -1689,7 +1931,7 @@ mutable struct SDL_Window end
     SDL_WINDOW_RESIZABLE = 32
     SDL_WINDOW_MINIMIZED = 64
     SDL_WINDOW_MAXIMIZED = 128
-    SDL_WINDOW_INPUT_GRABBED = 256
+    SDL_WINDOW_MOUSE_GRABBED = 256
     SDL_WINDOW_INPUT_FOCUS = 512
     SDL_WINDOW_MOUSE_FOCUS = 1024
     SDL_WINDOW_FULLSCREEN_DESKTOP = 4097
@@ -1701,7 +1943,10 @@ mutable struct SDL_Window end
     SDL_WINDOW_UTILITY = 131072
     SDL_WINDOW_TOOLTIP = 262144
     SDL_WINDOW_POPUP_MENU = 524288
+    SDL_WINDOW_KEYBOARD_GRABBED = 1048576
     SDL_WINDOW_VULKAN = 268435456
+    SDL_WINDOW_METAL = 536870912
+    SDL_WINDOW_INPUT_GRABBED = 256
 end
 
 @cenum SDL_WindowEventID::UInt32 begin
@@ -1722,11 +1967,15 @@ end
     SDL_WINDOWEVENT_CLOSE = 14
     SDL_WINDOWEVENT_TAKE_FOCUS = 15
     SDL_WINDOWEVENT_HIT_TEST = 16
+    SDL_WINDOWEVENT_ICCPROF_CHANGED = 17
+    SDL_WINDOWEVENT_DISPLAY_CHANGED = 18
 end
 
 @cenum SDL_DisplayEventID::UInt32 begin
     SDL_DISPLAYEVENT_NONE = 0
     SDL_DISPLAYEVENT_ORIENTATION = 1
+    SDL_DISPLAYEVENT_CONNECTED = 2
+    SDL_DISPLAYEVENT_DISCONNECTED = 3
 end
 
 @cenum SDL_DisplayOrientation::UInt32 begin
@@ -1735,6 +1984,12 @@ end
     SDL_ORIENTATION_LANDSCAPE_FLIPPED = 2
     SDL_ORIENTATION_PORTRAIT = 3
     SDL_ORIENTATION_PORTRAIT_FLIPPED = 4
+end
+
+@cenum SDL_FlashOperation::UInt32 begin
+    SDL_FLASH_CANCEL = 0
+    SDL_FLASH_BRIEFLY = 1
+    SDL_FLASH_UNTIL_FOCUSED = 2
 end
 
 const SDL_GLContext = Ptr{Cvoid}
@@ -1767,6 +2022,7 @@ const SDL_GLContext = Ptr{Cvoid}
     SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24
     SDL_GL_CONTEXT_RESET_NOTIFICATION = 25
     SDL_GL_CONTEXT_NO_ERROR = 26
+    SDL_GL_FLOATBUFFERS = 27
 end
 
 @cenum SDL_GLprofile::UInt32 begin
@@ -1856,6 +2112,14 @@ function SDL_GetClosestDisplayMode(displayIndex, mode, closest)
     ccall((:SDL_GetClosestDisplayMode, libsdl2), Ptr{SDL_DisplayMode}, (Cint, Ptr{SDL_DisplayMode}, Ptr{SDL_DisplayMode}), displayIndex, mode, closest)
 end
 
+function SDL_GetPointDisplayIndex(point)
+    ccall((:SDL_GetPointDisplayIndex, libsdl2), Cint, (Ptr{SDL_Point},), point)
+end
+
+function SDL_GetRectDisplayIndex(rect)
+    ccall((:SDL_GetRectDisplayIndex, libsdl2), Cint, (Ptr{SDL_Rect},), rect)
+end
+
 function SDL_GetWindowDisplayIndex(window)
     ccall((:SDL_GetWindowDisplayIndex, libsdl2), Cint, (Ptr{SDL_Window},), window)
 end
@@ -1866,6 +2130,10 @@ end
 
 function SDL_GetWindowDisplayMode(window, mode)
     ccall((:SDL_GetWindowDisplayMode, libsdl2), Cint, (Ptr{SDL_Window}, Ptr{SDL_DisplayMode}), window, mode)
+end
+
+function SDL_GetWindowICCProfile(window, size)
+    ccall((:SDL_GetWindowICCProfile, libsdl2), Ptr{Cvoid}, (Ptr{SDL_Window}, Ptr{Csize_t}), window, size)
 end
 
 function SDL_GetWindowPixelFormat(window)
@@ -1956,6 +2224,10 @@ function SDL_SetWindowResizable(window, resizable)
     ccall((:SDL_SetWindowResizable, libsdl2), Cvoid, (Ptr{SDL_Window}, SDL_bool), window, resizable)
 end
 
+function SDL_SetWindowAlwaysOnTop(window, on_top)
+    ccall((:SDL_SetWindowAlwaysOnTop, libsdl2), Cvoid, (Ptr{SDL_Window}, SDL_bool), window, on_top)
+end
+
 function SDL_ShowWindow(window)
     ccall((:SDL_ShowWindow, libsdl2), Cvoid, (Ptr{SDL_Window},), window)
 end
@@ -2000,12 +2272,36 @@ function SDL_SetWindowGrab(window, grabbed)
     ccall((:SDL_SetWindowGrab, libsdl2), Cvoid, (Ptr{SDL_Window}, SDL_bool), window, grabbed)
 end
 
+function SDL_SetWindowKeyboardGrab(window, grabbed)
+    ccall((:SDL_SetWindowKeyboardGrab, libsdl2), Cvoid, (Ptr{SDL_Window}, SDL_bool), window, grabbed)
+end
+
+function SDL_SetWindowMouseGrab(window, grabbed)
+    ccall((:SDL_SetWindowMouseGrab, libsdl2), Cvoid, (Ptr{SDL_Window}, SDL_bool), window, grabbed)
+end
+
 function SDL_GetWindowGrab(window)
     ccall((:SDL_GetWindowGrab, libsdl2), SDL_bool, (Ptr{SDL_Window},), window)
 end
 
+function SDL_GetWindowKeyboardGrab(window)
+    ccall((:SDL_GetWindowKeyboardGrab, libsdl2), SDL_bool, (Ptr{SDL_Window},), window)
+end
+
+function SDL_GetWindowMouseGrab(window)
+    ccall((:SDL_GetWindowMouseGrab, libsdl2), SDL_bool, (Ptr{SDL_Window},), window)
+end
+
 function SDL_GetGrabbedWindow()
     ccall((:SDL_GetGrabbedWindow, libsdl2), Ptr{SDL_Window}, ())
+end
+
+function SDL_SetWindowMouseRect(window, rect)
+    ccall((:SDL_SetWindowMouseRect, libsdl2), Cint, (Ptr{SDL_Window}, Ptr{SDL_Rect}), window, rect)
+end
+
+function SDL_GetWindowMouseRect(window)
+    ccall((:SDL_GetWindowMouseRect, libsdl2), Ptr{SDL_Rect}, (Ptr{SDL_Window},), window)
 end
 
 function SDL_SetWindowBrightness(window, brightness)
@@ -2058,6 +2354,10 @@ const SDL_HitTest = Ptr{Cvoid}
 
 function SDL_SetWindowHitTest(window, callback, callback_data)
     ccall((:SDL_SetWindowHitTest, libsdl2), Cint, (Ptr{SDL_Window}, SDL_HitTest, Ptr{Cvoid}), window, callback, callback_data)
+end
+
+function SDL_FlashWindow(window, operation)
+    ccall((:SDL_FlashWindow, libsdl2), Cint, (Ptr{SDL_Window}, SDL_FlashOperation), window, operation)
 end
 
 function SDL_DestroyWindow(window)
@@ -2384,6 +2684,10 @@ end
     SDL_SCANCODE_APP2 = 284
     SDL_SCANCODE_AUDIOREWIND = 285
     SDL_SCANCODE_AUDIOFASTFORWARD = 286
+    SDL_SCANCODE_SOFTLEFT = 287
+    SDL_SCANCODE_SOFTRIGHT = 288
+    SDL_SCANCODE_CALL = 289
+    SDL_SCANCODE_ENDCALL = 290
     SDL_NUM_SCANCODES = 512
 end
 
@@ -2630,6 +2934,10 @@ const SDL_Keycode = Sint32
     SDLK_APP2 = 1073742108
     SDLK_AUDIOREWIND = 1073742109
     SDLK_AUDIOFASTFORWARD = 1073742110
+    SDLK_SOFTLEFT = 1073742111
+    SDLK_SOFTRIGHT = 1073742112
+    SDLK_CALL = 1073742113
+    SDLK_ENDCALL = 1073742114
 end
 
 @cenum SDL_Keymod::UInt32 begin
@@ -2645,6 +2953,11 @@ end
     KMOD_NUM = 4096
     KMOD_CAPS = 8192
     KMOD_MODE = 16384
+    KMOD_SCROLL = 32768
+    KMOD_CTRL = 192
+    KMOD_SHIFT = 3
+    KMOD_ALT = 768
+    KMOD_GUI = 3072
     KMOD_RESERVED = 32768
 end
 
@@ -2661,6 +2974,10 @@ end
 
 function SDL_GetKeyboardState(numkeys)
     ccall((:SDL_GetKeyboardState, libsdl2), Ptr{Uint8}, (Ptr{Cint},), numkeys)
+end
+
+function SDL_ResetKeyboard()
+    ccall((:SDL_ResetKeyboard, libsdl2), Cvoid, ())
 end
 
 function SDL_GetModState()
@@ -2705,6 +3022,14 @@ end
 
 function SDL_StopTextInput()
     ccall((:SDL_StopTextInput, libsdl2), Cvoid, ())
+end
+
+function SDL_ClearComposition()
+    ccall((:SDL_ClearComposition, libsdl2), Cvoid, ())
+end
+
+function SDL_IsTextInputShown()
+    ccall((:SDL_IsTextInputShown, libsdl2), SDL_bool, ())
 end
 
 function SDL_SetTextInputRect(rect)
@@ -2810,13 +3135,23 @@ function SDL_ShowCursor(toggle)
     ccall((:SDL_ShowCursor, libsdl2), Cint, (Cint,), toggle)
 end
 
+struct SDL_GUID
+    data::NTuple{16, Uint8}
+end
+
+function SDL_GUIDToString(guid, pszGUID, cbGUID)
+    ccall((:SDL_GUIDToString, libsdl2), Cvoid, (SDL_GUID, Ptr{Cchar}, Cint), guid, pszGUID, cbGUID)
+end
+
+function SDL_GUIDFromString(pchGUID)
+    ccall((:SDL_GUIDFromString, libsdl2), SDL_GUID, (Ptr{Cchar},), pchGUID)
+end
+
 mutable struct _SDL_Joystick end
 
 const SDL_Joystick = _SDL_Joystick
 
-struct SDL_JoystickGUID
-    data::NTuple{16,Uint8}
-end
+const SDL_JoystickGUID = SDL_GUID
 
 const SDL_JoystickID = Sint32
 
@@ -2859,6 +3194,10 @@ function SDL_JoystickNameForIndex(device_index)
     ccall((:SDL_JoystickNameForIndex, libsdl2), Ptr{Cchar}, (Cint,), device_index)
 end
 
+function SDL_JoystickPathForIndex(device_index)
+    ccall((:SDL_JoystickPathForIndex, libsdl2), Ptr{Cchar}, (Cint,), device_index)
+end
+
 function SDL_JoystickGetDevicePlayerIndex(device_index)
     ccall((:SDL_JoystickGetDevicePlayerIndex, libsdl2), Cint, (Cint,), device_index)
 end
@@ -2899,8 +3238,61 @@ function SDL_JoystickFromPlayerIndex(player_index)
     ccall((:SDL_JoystickFromPlayerIndex, libsdl2), Ptr{SDL_Joystick}, (Cint,), player_index)
 end
 
+function SDL_JoystickAttachVirtual(type, naxes, nbuttons, nhats)
+    ccall((:SDL_JoystickAttachVirtual, libsdl2), Cint, (SDL_JoystickType, Cint, Cint, Cint), type, naxes, nbuttons, nhats)
+end
+
+struct SDL_VirtualJoystickDesc
+    version::Uint16
+    type::Uint16
+    naxes::Uint16
+    nbuttons::Uint16
+    nhats::Uint16
+    vendor_id::Uint16
+    product_id::Uint16
+    padding::Uint16
+    button_mask::Uint32
+    axis_mask::Uint32
+    name::Ptr{Cchar}
+    userdata::Ptr{Cvoid}
+    Update::Ptr{Cvoid}
+    SetPlayerIndex::Ptr{Cvoid}
+    Rumble::Ptr{Cvoid}
+    RumbleTriggers::Ptr{Cvoid}
+    SetLED::Ptr{Cvoid}
+    SendEffect::Ptr{Cvoid}
+end
+
+function SDL_JoystickAttachVirtualEx(desc)
+    ccall((:SDL_JoystickAttachVirtualEx, libsdl2), Cint, (Ptr{SDL_VirtualJoystickDesc},), desc)
+end
+
+function SDL_JoystickDetachVirtual(device_index)
+    ccall((:SDL_JoystickDetachVirtual, libsdl2), Cint, (Cint,), device_index)
+end
+
+function SDL_JoystickIsVirtual(device_index)
+    ccall((:SDL_JoystickIsVirtual, libsdl2), SDL_bool, (Cint,), device_index)
+end
+
+function SDL_JoystickSetVirtualAxis(joystick, axis, value)
+    ccall((:SDL_JoystickSetVirtualAxis, libsdl2), Cint, (Ptr{SDL_Joystick}, Cint, Sint16), joystick, axis, value)
+end
+
+function SDL_JoystickSetVirtualButton(joystick, button, value)
+    ccall((:SDL_JoystickSetVirtualButton, libsdl2), Cint, (Ptr{SDL_Joystick}, Cint, Uint8), joystick, button, value)
+end
+
+function SDL_JoystickSetVirtualHat(joystick, hat, value)
+    ccall((:SDL_JoystickSetVirtualHat, libsdl2), Cint, (Ptr{SDL_Joystick}, Cint, Uint8), joystick, hat, value)
+end
+
 function SDL_JoystickName(joystick)
     ccall((:SDL_JoystickName, libsdl2), Ptr{Cchar}, (Ptr{SDL_Joystick},), joystick)
+end
+
+function SDL_JoystickPath(joystick)
+    ccall((:SDL_JoystickPath, libsdl2), Ptr{Cchar}, (Ptr{SDL_Joystick},), joystick)
 end
 
 function SDL_JoystickGetPlayerIndex(joystick)
@@ -2925,6 +3317,14 @@ end
 
 function SDL_JoystickGetProductVersion(joystick)
     ccall((:SDL_JoystickGetProductVersion, libsdl2), Uint16, (Ptr{SDL_Joystick},), joystick)
+end
+
+function SDL_JoystickGetFirmwareVersion(joystick)
+    ccall((:SDL_JoystickGetFirmwareVersion, libsdl2), Uint16, (Ptr{SDL_Joystick},), joystick)
+end
+
+function SDL_JoystickGetSerial(joystick)
+    ccall((:SDL_JoystickGetSerial, libsdl2), Ptr{Cchar}, (Ptr{SDL_Joystick},), joystick)
 end
 
 function SDL_JoystickGetType(joystick)
@@ -2995,12 +3395,113 @@ function SDL_JoystickRumble(joystick, low_frequency_rumble, high_frequency_rumbl
     ccall((:SDL_JoystickRumble, libsdl2), Cint, (Ptr{SDL_Joystick}, Uint16, Uint16, Uint32), joystick, low_frequency_rumble, high_frequency_rumble, duration_ms)
 end
 
+function SDL_JoystickRumbleTriggers(joystick, left_rumble, right_rumble, duration_ms)
+    ccall((:SDL_JoystickRumbleTriggers, libsdl2), Cint, (Ptr{SDL_Joystick}, Uint16, Uint16, Uint32), joystick, left_rumble, right_rumble, duration_ms)
+end
+
+function SDL_JoystickHasLED(joystick)
+    ccall((:SDL_JoystickHasLED, libsdl2), SDL_bool, (Ptr{SDL_Joystick},), joystick)
+end
+
+function SDL_JoystickHasRumble(joystick)
+    ccall((:SDL_JoystickHasRumble, libsdl2), SDL_bool, (Ptr{SDL_Joystick},), joystick)
+end
+
+function SDL_JoystickHasRumbleTriggers(joystick)
+    ccall((:SDL_JoystickHasRumbleTriggers, libsdl2), SDL_bool, (Ptr{SDL_Joystick},), joystick)
+end
+
+function SDL_JoystickSetLED(joystick, red, green, blue)
+    ccall((:SDL_JoystickSetLED, libsdl2), Cint, (Ptr{SDL_Joystick}, Uint8, Uint8, Uint8), joystick, red, green, blue)
+end
+
+function SDL_JoystickSendEffect(joystick, data, size)
+    ccall((:SDL_JoystickSendEffect, libsdl2), Cint, (Ptr{SDL_Joystick}, Ptr{Cvoid}, Cint), joystick, data, size)
+end
+
 function SDL_JoystickClose(joystick)
     ccall((:SDL_JoystickClose, libsdl2), Cvoid, (Ptr{SDL_Joystick},), joystick)
 end
 
 function SDL_JoystickCurrentPowerLevel(joystick)
     ccall((:SDL_JoystickCurrentPowerLevel, libsdl2), SDL_JoystickPowerLevel, (Ptr{SDL_Joystick},), joystick)
+end
+
+mutable struct _SDL_Sensor end
+
+const SDL_Sensor = _SDL_Sensor
+
+const SDL_SensorID = Sint32
+
+@cenum SDL_SensorType::Int32 begin
+    SDL_SENSOR_INVALID = -1
+    SDL_SENSOR_UNKNOWN = 0
+    SDL_SENSOR_ACCEL = 1
+    SDL_SENSOR_GYRO = 2
+end
+
+function SDL_LockSensors()
+    ccall((:SDL_LockSensors, libsdl2), Cvoid, ())
+end
+
+function SDL_UnlockSensors()
+    ccall((:SDL_UnlockSensors, libsdl2), Cvoid, ())
+end
+
+function SDL_NumSensors()
+    ccall((:SDL_NumSensors, libsdl2), Cint, ())
+end
+
+function SDL_SensorGetDeviceName(device_index)
+    ccall((:SDL_SensorGetDeviceName, libsdl2), Ptr{Cchar}, (Cint,), device_index)
+end
+
+function SDL_SensorGetDeviceType(device_index)
+    ccall((:SDL_SensorGetDeviceType, libsdl2), SDL_SensorType, (Cint,), device_index)
+end
+
+function SDL_SensorGetDeviceNonPortableType(device_index)
+    ccall((:SDL_SensorGetDeviceNonPortableType, libsdl2), Cint, (Cint,), device_index)
+end
+
+function SDL_SensorGetDeviceInstanceID(device_index)
+    ccall((:SDL_SensorGetDeviceInstanceID, libsdl2), SDL_SensorID, (Cint,), device_index)
+end
+
+function SDL_SensorOpen(device_index)
+    ccall((:SDL_SensorOpen, libsdl2), Ptr{SDL_Sensor}, (Cint,), device_index)
+end
+
+function SDL_SensorFromInstanceID(instance_id)
+    ccall((:SDL_SensorFromInstanceID, libsdl2), Ptr{SDL_Sensor}, (SDL_SensorID,), instance_id)
+end
+
+function SDL_SensorGetName(sensor)
+    ccall((:SDL_SensorGetName, libsdl2), Ptr{Cchar}, (Ptr{SDL_Sensor},), sensor)
+end
+
+function SDL_SensorGetType(sensor)
+    ccall((:SDL_SensorGetType, libsdl2), SDL_SensorType, (Ptr{SDL_Sensor},), sensor)
+end
+
+function SDL_SensorGetNonPortableType(sensor)
+    ccall((:SDL_SensorGetNonPortableType, libsdl2), Cint, (Ptr{SDL_Sensor},), sensor)
+end
+
+function SDL_SensorGetInstanceID(sensor)
+    ccall((:SDL_SensorGetInstanceID, libsdl2), SDL_SensorID, (Ptr{SDL_Sensor},), sensor)
+end
+
+function SDL_SensorGetData(sensor, data, num_values)
+    ccall((:SDL_SensorGetData, libsdl2), Cint, (Ptr{SDL_Sensor}, Ptr{Cfloat}, Cint), sensor, data, num_values)
+end
+
+function SDL_SensorClose(sensor)
+    ccall((:SDL_SensorClose, libsdl2), Cvoid, (Ptr{SDL_Sensor},), sensor)
+end
+
+function SDL_SensorUpdate()
+    ccall((:SDL_SensorUpdate, libsdl2), Cvoid, ())
 end
 
 mutable struct _SDL_GameController end
@@ -3014,6 +3515,14 @@ const SDL_GameController = _SDL_GameController
     SDL_CONTROLLER_TYPE_PS3 = 3
     SDL_CONTROLLER_TYPE_PS4 = 4
     SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO = 5
+    SDL_CONTROLLER_TYPE_VIRTUAL = 6
+    SDL_CONTROLLER_TYPE_PS5 = 7
+    SDL_CONTROLLER_TYPE_AMAZON_LUNA = 8
+    SDL_CONTROLLER_TYPE_GOOGLE_STADIA = 9
+    SDL_CONTROLLER_TYPE_NVIDIA_SHIELD = 10
+    SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT = 11
+    SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT = 12
+    SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR = 13
 end
 
 @cenum SDL_GameControllerBindType::UInt32 begin
@@ -3023,13 +3532,35 @@ end
     SDL_CONTROLLER_BINDTYPE_HAT = 3
 end
 
+struct __JL_Ctag_479
+    data::NTuple{8, UInt8}
+end
+
+function Base.getproperty(x::Ptr{__JL_Ctag_479}, f::Symbol)
+    f === :button && return Ptr{Cint}(x + 0)
+    f === :axis && return Ptr{Cint}(x + 0)
+    f === :hat && return Ptr{__JL_Ctag_480}(x + 0)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_479, f::Symbol)
+    r = Ref{__JL_Ctag_479}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_479}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_479}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
 struct SDL_GameControllerButtonBind
-    data::NTuple{12,UInt8}
+    data::NTuple{12, UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_GameControllerButtonBind}, f::Symbol)
     f === :bindType && return Ptr{SDL_GameControllerBindType}(x + 0)
-    f === :value && return Ptr{__JL_Ctag_249}(x + 4)
+    f === :value && return Ptr{__JL_Ctag_479}(x + 4)
     return getfield(x, f)
 end
 
@@ -3042,10 +3573,6 @@ end
 
 function Base.setproperty!(x::Ptr{SDL_GameControllerButtonBind}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
-end
-
-function SDL_GameControllerAddMappingsFromRW(rw, freerw)
-    ccall((:SDL_GameControllerAddMappingsFromRW, libsdl2), Cint, (Ptr{SDL_RWops}, Cint), rw, freerw)
 end
 
 function SDL_GameControllerAddMapping(mappingString)
@@ -3076,6 +3603,10 @@ function SDL_GameControllerNameForIndex(joystick_index)
     ccall((:SDL_GameControllerNameForIndex, libsdl2), Ptr{Cchar}, (Cint,), joystick_index)
 end
 
+function SDL_GameControllerPathForIndex(joystick_index)
+    ccall((:SDL_GameControllerPathForIndex, libsdl2), Ptr{Cchar}, (Cint,), joystick_index)
+end
+
 function SDL_GameControllerTypeForIndex(joystick_index)
     ccall((:SDL_GameControllerTypeForIndex, libsdl2), SDL_GameControllerType, (Cint,), joystick_index)
 end
@@ -3100,6 +3631,10 @@ function SDL_GameControllerName(gamecontroller)
     ccall((:SDL_GameControllerName, libsdl2), Ptr{Cchar}, (Ptr{SDL_GameController},), gamecontroller)
 end
 
+function SDL_GameControllerPath(gamecontroller)
+    ccall((:SDL_GameControllerPath, libsdl2), Ptr{Cchar}, (Ptr{SDL_GameController},), gamecontroller)
+end
+
 function SDL_GameControllerGetType(gamecontroller)
     ccall((:SDL_GameControllerGetType, libsdl2), SDL_GameControllerType, (Ptr{SDL_GameController},), gamecontroller)
 end
@@ -3122,6 +3657,14 @@ end
 
 function SDL_GameControllerGetProductVersion(gamecontroller)
     ccall((:SDL_GameControllerGetProductVersion, libsdl2), Uint16, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerGetFirmwareVersion(gamecontroller)
+    ccall((:SDL_GameControllerGetFirmwareVersion, libsdl2), Uint16, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerGetSerial(gamecontroller)
+    ccall((:SDL_GameControllerGetSerial, libsdl2), Ptr{Cchar}, (Ptr{SDL_GameController},), gamecontroller)
 end
 
 function SDL_GameControllerGetAttached(gamecontroller)
@@ -3151,8 +3694,8 @@ end
     SDL_CONTROLLER_AXIS_MAX = 6
 end
 
-function SDL_GameControllerGetAxisFromString(pchString)
-    ccall((:SDL_GameControllerGetAxisFromString, libsdl2), SDL_GameControllerAxis, (Ptr{Cchar},), pchString)
+function SDL_GameControllerGetAxisFromString(str)
+    ccall((:SDL_GameControllerGetAxisFromString, libsdl2), SDL_GameControllerAxis, (Ptr{Cchar},), str)
 end
 
 function SDL_GameControllerGetStringForAxis(axis)
@@ -3161,6 +3704,10 @@ end
 
 function SDL_GameControllerGetBindForAxis(gamecontroller, axis)
     ccall((:SDL_GameControllerGetBindForAxis, libsdl2), SDL_GameControllerButtonBind, (Ptr{SDL_GameController}, SDL_GameControllerAxis), gamecontroller, axis)
+end
+
+function SDL_GameControllerHasAxis(gamecontroller, axis)
+    ccall((:SDL_GameControllerHasAxis, libsdl2), SDL_bool, (Ptr{SDL_GameController}, SDL_GameControllerAxis), gamecontroller, axis)
 end
 
 function SDL_GameControllerGetAxis(gamecontroller, axis)
@@ -3184,11 +3731,17 @@ end
     SDL_CONTROLLER_BUTTON_DPAD_DOWN = 12
     SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13
     SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14
-    SDL_CONTROLLER_BUTTON_MAX = 15
+    SDL_CONTROLLER_BUTTON_MISC1 = 15
+    SDL_CONTROLLER_BUTTON_PADDLE1 = 16
+    SDL_CONTROLLER_BUTTON_PADDLE2 = 17
+    SDL_CONTROLLER_BUTTON_PADDLE3 = 18
+    SDL_CONTROLLER_BUTTON_PADDLE4 = 19
+    SDL_CONTROLLER_BUTTON_TOUCHPAD = 20
+    SDL_CONTROLLER_BUTTON_MAX = 21
 end
 
-function SDL_GameControllerGetButtonFromString(pchString)
-    ccall((:SDL_GameControllerGetButtonFromString, libsdl2), SDL_GameControllerButton, (Ptr{Cchar},), pchString)
+function SDL_GameControllerGetButtonFromString(str)
+    ccall((:SDL_GameControllerGetButtonFromString, libsdl2), SDL_GameControllerButton, (Ptr{Cchar},), str)
 end
 
 function SDL_GameControllerGetStringForButton(button)
@@ -3199,16 +3752,84 @@ function SDL_GameControllerGetBindForButton(gamecontroller, button)
     ccall((:SDL_GameControllerGetBindForButton, libsdl2), SDL_GameControllerButtonBind, (Ptr{SDL_GameController}, SDL_GameControllerButton), gamecontroller, button)
 end
 
+function SDL_GameControllerHasButton(gamecontroller, button)
+    ccall((:SDL_GameControllerHasButton, libsdl2), SDL_bool, (Ptr{SDL_GameController}, SDL_GameControllerButton), gamecontroller, button)
+end
+
 function SDL_GameControllerGetButton(gamecontroller, button)
     ccall((:SDL_GameControllerGetButton, libsdl2), Uint8, (Ptr{SDL_GameController}, SDL_GameControllerButton), gamecontroller, button)
+end
+
+function SDL_GameControllerGetNumTouchpads(gamecontroller)
+    ccall((:SDL_GameControllerGetNumTouchpads, libsdl2), Cint, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerGetNumTouchpadFingers(gamecontroller, touchpad)
+    ccall((:SDL_GameControllerGetNumTouchpadFingers, libsdl2), Cint, (Ptr{SDL_GameController}, Cint), gamecontroller, touchpad)
+end
+
+function SDL_GameControllerGetTouchpadFinger(gamecontroller, touchpad, finger, state, x, y, pressure)
+    ccall((:SDL_GameControllerGetTouchpadFinger, libsdl2), Cint, (Ptr{SDL_GameController}, Cint, Cint, Ptr{Uint8}, Ptr{Cfloat}, Ptr{Cfloat}, Ptr{Cfloat}), gamecontroller, touchpad, finger, state, x, y, pressure)
+end
+
+function SDL_GameControllerHasSensor(gamecontroller, type)
+    ccall((:SDL_GameControllerHasSensor, libsdl2), SDL_bool, (Ptr{SDL_GameController}, SDL_SensorType), gamecontroller, type)
+end
+
+function SDL_GameControllerSetSensorEnabled(gamecontroller, type, enabled)
+    ccall((:SDL_GameControllerSetSensorEnabled, libsdl2), Cint, (Ptr{SDL_GameController}, SDL_SensorType, SDL_bool), gamecontroller, type, enabled)
+end
+
+function SDL_GameControllerIsSensorEnabled(gamecontroller, type)
+    ccall((:SDL_GameControllerIsSensorEnabled, libsdl2), SDL_bool, (Ptr{SDL_GameController}, SDL_SensorType), gamecontroller, type)
+end
+
+function SDL_GameControllerGetSensorDataRate(gamecontroller, type)
+    ccall((:SDL_GameControllerGetSensorDataRate, libsdl2), Cfloat, (Ptr{SDL_GameController}, SDL_SensorType), gamecontroller, type)
+end
+
+function SDL_GameControllerGetSensorData(gamecontroller, type, data, num_values)
+    ccall((:SDL_GameControllerGetSensorData, libsdl2), Cint, (Ptr{SDL_GameController}, SDL_SensorType, Ptr{Cfloat}, Cint), gamecontroller, type, data, num_values)
 end
 
 function SDL_GameControllerRumble(gamecontroller, low_frequency_rumble, high_frequency_rumble, duration_ms)
     ccall((:SDL_GameControllerRumble, libsdl2), Cint, (Ptr{SDL_GameController}, Uint16, Uint16, Uint32), gamecontroller, low_frequency_rumble, high_frequency_rumble, duration_ms)
 end
 
+function SDL_GameControllerRumbleTriggers(gamecontroller, left_rumble, right_rumble, duration_ms)
+    ccall((:SDL_GameControllerRumbleTriggers, libsdl2), Cint, (Ptr{SDL_GameController}, Uint16, Uint16, Uint32), gamecontroller, left_rumble, right_rumble, duration_ms)
+end
+
+function SDL_GameControllerHasLED(gamecontroller)
+    ccall((:SDL_GameControllerHasLED, libsdl2), SDL_bool, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerHasRumble(gamecontroller)
+    ccall((:SDL_GameControllerHasRumble, libsdl2), SDL_bool, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerHasRumbleTriggers(gamecontroller)
+    ccall((:SDL_GameControllerHasRumbleTriggers, libsdl2), SDL_bool, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerSetLED(gamecontroller, red, green, blue)
+    ccall((:SDL_GameControllerSetLED, libsdl2), Cint, (Ptr{SDL_GameController}, Uint8, Uint8, Uint8), gamecontroller, red, green, blue)
+end
+
+function SDL_GameControllerSendEffect(gamecontroller, data, size)
+    ccall((:SDL_GameControllerSendEffect, libsdl2), Cint, (Ptr{SDL_GameController}, Ptr{Cvoid}, Cint), gamecontroller, data, size)
+end
+
 function SDL_GameControllerClose(gamecontroller)
     ccall((:SDL_GameControllerClose, libsdl2), Cvoid, (Ptr{SDL_GameController},), gamecontroller)
+end
+
+function SDL_GameControllerGetAppleSFSymbolsNameForButton(gamecontroller, button)
+    ccall((:SDL_GameControllerGetAppleSFSymbolsNameForButton, libsdl2), Ptr{Cchar}, (Ptr{SDL_GameController}, SDL_GameControllerButton), gamecontroller, button)
+end
+
+function SDL_GameControllerGetAppleSFSymbolsNameForAxis(gamecontroller, axis)
+    ccall((:SDL_GameControllerGetAppleSFSymbolsNameForAxis, libsdl2), Ptr{Cchar}, (Ptr{SDL_GameController}, SDL_GameControllerAxis), gamecontroller, axis)
 end
 
 const SDL_TouchID = Sint64
@@ -3235,6 +3856,10 @@ end
 
 function SDL_GetTouchDevice(index)
     ccall((:SDL_GetTouchDevice, libsdl2), SDL_TouchID, (Cint,), index)
+end
+
+function SDL_GetTouchName(index)
+    ccall((:SDL_GetTouchName, libsdl2), Ptr{Cchar}, (Cint,), index)
 end
 
 function SDL_GetTouchDeviceType(touchID)
@@ -3276,6 +3901,7 @@ end
     SDL_APP_DIDENTERBACKGROUND = 260
     SDL_APP_WILLENTERFOREGROUND = 261
     SDL_APP_DIDENTERFOREGROUND = 262
+    SDL_LOCALECHANGED = 263
     SDL_DISPLAYEVENT = 336
     SDL_WINDOWEVENT = 512
     SDL_SYSWMEVENT = 513
@@ -3284,6 +3910,7 @@ end
     SDL_TEXTEDITING = 770
     SDL_TEXTINPUT = 771
     SDL_KEYMAPCHANGED = 772
+    SDL_TEXTEDITING_EXT = 773
     SDL_MOUSEMOTION = 1024
     SDL_MOUSEBUTTONDOWN = 1025
     SDL_MOUSEBUTTONUP = 1026
@@ -3295,12 +3922,17 @@ end
     SDL_JOYBUTTONUP = 1540
     SDL_JOYDEVICEADDED = 1541
     SDL_JOYDEVICEREMOVED = 1542
+    SDL_JOYBATTERYUPDATED = 1543
     SDL_CONTROLLERAXISMOTION = 1616
     SDL_CONTROLLERBUTTONDOWN = 1617
     SDL_CONTROLLERBUTTONUP = 1618
     SDL_CONTROLLERDEVICEADDED = 1619
     SDL_CONTROLLERDEVICEREMOVED = 1620
     SDL_CONTROLLERDEVICEREMAPPED = 1621
+    SDL_CONTROLLERTOUCHPADDOWN = 1622
+    SDL_CONTROLLERTOUCHPADMOTION = 1623
+    SDL_CONTROLLERTOUCHPADUP = 1624
+    SDL_CONTROLLERSENSORUPDATE = 1625
     SDL_FINGERDOWN = 1792
     SDL_FINGERUP = 1793
     SDL_FINGERMOTION = 1794
@@ -3317,6 +3949,7 @@ end
     SDL_SENSORUPDATE = 4608
     SDL_RENDER_TARGETS_RESET = 8192
     SDL_RENDER_DEVICE_RESET = 8193
+    SDL_POLLSENTINEL = 32512
     SDL_USEREVENT = 32768
     SDL_LASTEVENT = 65535
 end
@@ -3364,7 +3997,16 @@ struct SDL_TextEditingEvent
     type::Uint32
     timestamp::Uint32
     windowID::Uint32
-    text::NTuple{32,Cchar}
+    text::NTuple{32, Cchar}
+    start::Sint32
+    length::Sint32
+end
+
+struct SDL_TextEditingExtEvent
+    type::Uint32
+    timestamp::Uint32
+    windowID::Uint32
+    text::Ptr{Cchar}
     start::Sint32
     length::Sint32
 end
@@ -3373,7 +4015,7 @@ struct SDL_TextInputEvent
     type::Uint32
     timestamp::Uint32
     windowID::Uint32
-    text::NTuple{32,Cchar}
+    text::NTuple{32, Cchar}
 end
 
 struct SDL_MouseMotionEvent
@@ -3409,6 +4051,8 @@ struct SDL_MouseWheelEvent
     x::Sint32
     y::Sint32
     direction::Uint32
+    preciseX::Cfloat
+    preciseY::Cfloat
 end
 
 struct SDL_JoyAxisEvent
@@ -3461,6 +4105,13 @@ struct SDL_JoyDeviceEvent
     which::Sint32
 end
 
+struct SDL_JoyBatteryEvent
+    type::Uint32
+    timestamp::Uint32
+    which::SDL_JoystickID
+    level::SDL_JoystickPowerLevel
+end
+
 struct SDL_ControllerAxisEvent
     type::Uint32
     timestamp::Uint32
@@ -3487,6 +4138,25 @@ struct SDL_ControllerDeviceEvent
     type::Uint32
     timestamp::Uint32
     which::Sint32
+end
+
+struct SDL_ControllerTouchpadEvent
+    type::Uint32
+    timestamp::Uint32
+    which::SDL_JoystickID
+    touchpad::Sint32
+    finger::Sint32
+    x::Cfloat
+    y::Cfloat
+    pressure::Cfloat
+end
+
+struct SDL_ControllerSensorEvent
+    type::Uint32
+    timestamp::Uint32
+    which::SDL_JoystickID
+    sensor::Sint32
+    data::NTuple{3, Cfloat}
 end
 
 struct SDL_AudioDeviceEvent
@@ -3546,7 +4216,7 @@ struct SDL_SensorEvent
     type::Uint32
     timestamp::Uint32
     which::Sint32
-    data::NTuple{6,Cfloat}
+    data::NTuple{6, Cfloat}
 end
 
 struct SDL_QuitEvent
@@ -3574,69 +4244,6 @@ struct SDL_SysWMEvent
     type::Uint32
     timestamp::Uint32
     msg::Ptr{SDL_SysWMmsg}
-end
-
-struct SDL_Event
-    data::NTuple{56,UInt8}
-end
-
-function Base.getproperty(x::Ptr{SDL_Event}, f::Symbol)
-    f === :type && return Ptr{Uint32}(x + 0)
-    f === :common && return Ptr{SDL_CommonEvent}(x + 0)
-    f === :display && return Ptr{SDL_DisplayEvent}(x + 0)
-    f === :window && return Ptr{SDL_WindowEvent}(x + 0)
-    f === :key && return Ptr{SDL_KeyboardEvent}(x + 0)
-    f === :edit && return Ptr{SDL_TextEditingEvent}(x + 0)
-    f === :text && return Ptr{SDL_TextInputEvent}(x + 0)
-    f === :motion && return Ptr{SDL_MouseMotionEvent}(x + 0)
-    f === :button && return Ptr{SDL_MouseButtonEvent}(x + 0)
-    f === :wheel && return Ptr{SDL_MouseWheelEvent}(x + 0)
-    f === :jaxis && return Ptr{SDL_JoyAxisEvent}(x + 0)
-    f === :jball && return Ptr{SDL_JoyBallEvent}(x + 0)
-    f === :jhat && return Ptr{SDL_JoyHatEvent}(x + 0)
-    f === :jbutton && return Ptr{SDL_JoyButtonEvent}(x + 0)
-    f === :jdevice && return Ptr{SDL_JoyDeviceEvent}(x + 0)
-    f === :caxis && return Ptr{SDL_ControllerAxisEvent}(x + 0)
-    f === :cbutton && return Ptr{SDL_ControllerButtonEvent}(x + 0)
-    f === :cdevice && return Ptr{SDL_ControllerDeviceEvent}(x + 0)
-    f === :adevice && return Ptr{SDL_AudioDeviceEvent}(x + 0)
-    f === :sensor && return Ptr{SDL_SensorEvent}(x + 0)
-    f === :quit && return Ptr{SDL_QuitEvent}(x + 0)
-    f === :user && return Ptr{SDL_UserEvent}(x + 0)
-    f === :syswm && return Ptr{SDL_SysWMEvent}(x + 0)
-    f === :tfinger && return Ptr{SDL_TouchFingerEvent}(x + 0)
-    f === :mgesture && return Ptr{SDL_MultiGestureEvent}(x + 0)
-    f === :dgesture && return Ptr{SDL_DollarGestureEvent}(x + 0)
-    f === :drop && return Ptr{SDL_DropEvent}(x + 0)
-    f === :padding && return Ptr{NTuple{56,Uint8}}(x + 0)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::SDL_Event, f::Symbol)
-    r = Ref{SDL_Event}(x)
-    ptr = Base.unsafe_convert(Ptr{SDL_Event}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{SDL_Event}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-const SDL_compile_time_assert_SDL_Event = NTuple{1,Cint}
-
-function SDL_PumpEvents()
-    ccall((:SDL_PumpEvents, libsdl2), Cvoid, ())
-end
-
-@cenum SDL_eventaction::UInt32 begin
-    SDL_ADDEVENT = 0
-    SDL_PEEKEVENT = 1
-    SDL_GETEVENT = 2
-end
-
-function SDL_PeepEvents(events, numevents, action, minType, maxType)
-    ccall((:SDL_PeepEvents, libsdl2), Cint, (Ptr{SDL_Event}, Cint, SDL_eventaction, Uint32, Uint32), events, numevents, action, minType, maxType)
 end
 
 function SDL_HasEvent(type)
@@ -3694,10 +4301,6 @@ function SDL_FilterEvents(filter, userdata)
     ccall((:SDL_FilterEvents, libsdl2), Cvoid, (SDL_EventFilter, Ptr{Cvoid}), filter, userdata)
 end
 
-function SDL_EventState(type, state)
-    ccall((:SDL_EventState, libsdl2), Uint8, (Uint32, Cint), type, state)
-end
-
 function SDL_RegisterEvents(numevents)
     ccall((:SDL_RegisterEvents, libsdl2), Uint32, (Cint,), numevents)
 end
@@ -3716,7 +4319,7 @@ const SDL_Haptic = _SDL_Haptic
 
 struct SDL_HapticDirection
     type::Uint8
-    dir::NTuple{3,Sint32}
+    dir::NTuple{3, Sint32}
 end
 
 struct SDL_HapticConstant
@@ -3757,12 +4360,12 @@ struct SDL_HapticCondition
     delay::Uint16
     button::Uint16
     interval::Uint16
-    right_sat::NTuple{3,Uint16}
-    left_sat::NTuple{3,Uint16}
-    right_coeff::NTuple{3,Sint16}
-    left_coeff::NTuple{3,Sint16}
-    deadband::NTuple{3,Uint16}
-    center::NTuple{3,Sint16}
+    right_sat::NTuple{3, Uint16}
+    left_sat::NTuple{3, Uint16}
+    right_coeff::NTuple{3, Sint16}
+    left_coeff::NTuple{3, Sint16}
+    deadband::NTuple{3, Uint16}
+    center::NTuple{3, Sint16}
 end
 
 struct SDL_HapticRamp
@@ -3805,7 +4408,7 @@ struct SDL_HapticCustom
 end
 
 struct SDL_HapticEffect
-    data::NTuple{72,UInt8}
+    data::NTuple{72, UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_HapticEffect}, f::Symbol)
@@ -3950,6 +4553,110 @@ function SDL_HapticRumbleStop(haptic)
     ccall((:SDL_HapticRumbleStop, libsdl2), Cint, (Ptr{SDL_Haptic},), haptic)
 end
 
+mutable struct SDL_hid_device_ end
+
+const SDL_hid_device = SDL_hid_device_
+
+struct SDL_hid_device_info
+    path::Ptr{Cchar}
+    vendor_id::Cushort
+    product_id::Cushort
+    serial_number::Ptr{Cvoid} # serial_number::Ptr{Cwchar_t}
+    release_number::Cushort
+    manufacturer_string::Ptr{Cvoid} # manufacturer_string::Ptr{Cwchar_t}
+    product_string::Ptr{Cvoid} # product_string::Ptr{Cwchar_t}
+    usage_page::Cushort
+    usage::Cushort
+    interface_number::Cint
+    interface_class::Cint
+    interface_subclass::Cint
+    interface_protocol::Cint
+    next::Ptr{SDL_hid_device_info}
+end
+
+function Base.getproperty(x::SDL_hid_device_info, f::Symbol)
+    f === :serial_number && return Ptr{Cwchar_t}(getfield(x, f))
+    f === :manufacturer_string && return Ptr{Cwchar_t}(getfield(x, f))
+    f === :product_string && return Ptr{Cwchar_t}(getfield(x, f))
+    return getfield(x, f)
+end
+
+function SDL_hid_init()
+    ccall((:SDL_hid_init, libsdl2), Cint, ())
+end
+
+function SDL_hid_exit()
+    ccall((:SDL_hid_exit, libsdl2), Cint, ())
+end
+
+function SDL_hid_device_change_count()
+    ccall((:SDL_hid_device_change_count, libsdl2), Uint32, ())
+end
+
+function SDL_hid_enumerate(vendor_id, product_id)
+    ccall((:SDL_hid_enumerate, libsdl2), Ptr{SDL_hid_device_info}, (Cushort, Cushort), vendor_id, product_id)
+end
+
+function SDL_hid_free_enumeration(devs)
+    ccall((:SDL_hid_free_enumeration, libsdl2), Cvoid, (Ptr{SDL_hid_device_info},), devs)
+end
+
+function SDL_hid_open(vendor_id, product_id, serial_number)
+    ccall((:SDL_hid_open, libsdl2), Ptr{SDL_hid_device}, (Cushort, Cushort, Ptr{Cwchar_t}), vendor_id, product_id, serial_number)
+end
+
+function SDL_hid_open_path(path, bExclusive)
+    ccall((:SDL_hid_open_path, libsdl2), Ptr{SDL_hid_device}, (Ptr{Cchar}, Cint), path, bExclusive)
+end
+
+function SDL_hid_write(dev, data, length)
+    ccall((:SDL_hid_write, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cuchar}, Csize_t), dev, data, length)
+end
+
+function SDL_hid_read_timeout(dev, data, length, milliseconds)
+    ccall((:SDL_hid_read_timeout, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cuchar}, Csize_t, Cint), dev, data, length, milliseconds)
+end
+
+function SDL_hid_read(dev, data, length)
+    ccall((:SDL_hid_read, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cuchar}, Csize_t), dev, data, length)
+end
+
+function SDL_hid_set_nonblocking(dev, nonblock)
+    ccall((:SDL_hid_set_nonblocking, libsdl2), Cint, (Ptr{SDL_hid_device}, Cint), dev, nonblock)
+end
+
+function SDL_hid_send_feature_report(dev, data, length)
+    ccall((:SDL_hid_send_feature_report, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cuchar}, Csize_t), dev, data, length)
+end
+
+function SDL_hid_get_feature_report(dev, data, length)
+    ccall((:SDL_hid_get_feature_report, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cuchar}, Csize_t), dev, data, length)
+end
+
+function SDL_hid_close(dev)
+    ccall((:SDL_hid_close, libsdl2), Cvoid, (Ptr{SDL_hid_device},), dev)
+end
+
+function SDL_hid_get_manufacturer_string(dev, string, maxlen)
+    ccall((:SDL_hid_get_manufacturer_string, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cwchar_t}, Csize_t), dev, string, maxlen)
+end
+
+function SDL_hid_get_product_string(dev, string, maxlen)
+    ccall((:SDL_hid_get_product_string, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cwchar_t}, Csize_t), dev, string, maxlen)
+end
+
+function SDL_hid_get_serial_number_string(dev, string, maxlen)
+    ccall((:SDL_hid_get_serial_number_string, libsdl2), Cint, (Ptr{SDL_hid_device}, Ptr{Cwchar_t}, Csize_t), dev, string, maxlen)
+end
+
+function SDL_hid_get_indexed_string(dev, string_index, string, maxlen)
+    ccall((:SDL_hid_get_indexed_string, libsdl2), Cint, (Ptr{SDL_hid_device}, Cint, Ptr{Cwchar_t}, Csize_t), dev, string_index, string, maxlen)
+end
+
+function SDL_hid_ble_scan(active)
+    ccall((:SDL_hid_ble_scan, libsdl2), Cvoid, (SDL_bool,), active)
+end
+
 @cenum SDL_HintPriority::UInt32 begin
     SDL_HINT_DEFAULT = 0
     SDL_HINT_NORMAL = 1
@@ -3962,6 +4669,10 @@ end
 
 function SDL_SetHint(name, value)
     ccall((:SDL_SetHint, libsdl2), SDL_bool, (Ptr{Cchar}, Ptr{Cchar}), name, value)
+end
+
+function SDL_ResetHint(name)
+    ccall((:SDL_ResetHint, libsdl2), SDL_bool, (Ptr{Cchar},), name)
 end
 
 function SDL_GetHint(name)
@@ -4094,7 +4805,7 @@ end
 end
 
 struct SDL_MessageBoxColorScheme
-    colors::NTuple{5,SDL_MessageBoxColor}
+    colors::NTuple{5, SDL_MessageBoxColor}
 end
 
 struct SDL_MessageBoxData
@@ -4125,6 +4836,14 @@ function SDL_Metal_DestroyView(view)
     ccall((:SDL_Metal_DestroyView, libsdl2), Cvoid, (SDL_MetalView,), view)
 end
 
+function SDL_Metal_GetLayer(view)
+    ccall((:SDL_Metal_GetLayer, libsdl2), Ptr{Cvoid}, (SDL_MetalView,), view)
+end
+
+function SDL_Metal_GetDrawableSize(window, w, h)
+    ccall((:SDL_Metal_GetDrawableSize, libsdl2), Cvoid, (Ptr{SDL_Window}, Ptr{Cint}, Ptr{Cint}), window, w, h)
+end
+
 @cenum SDL_PowerState::UInt32 begin
     SDL_POWERSTATE_UNKNOWN = 0
     SDL_POWERSTATE_ON_BATTERY = 1
@@ -4148,9 +4867,15 @@ struct SDL_RendererInfo
     name::Ptr{Cchar}
     flags::Uint32
     num_texture_formats::Uint32
-    texture_formats::NTuple{16,Uint32}
+    texture_formats::NTuple{16, Uint32}
     max_texture_width::Cint
     max_texture_height::Cint
+end
+
+struct SDL_Vertex
+    position::SDL_FPoint
+    color::SDL_Color
+    tex_coord::SDL_FPoint
 end
 
 @cenum SDL_ScaleMode::UInt32 begin
@@ -4171,13 +4896,10 @@ end
     SDL_TEXTUREMODULATE_ALPHA = 2
 end
 
-#const RendererFlip = UInt32
-
 @cenum SDL_RendererFlip::UInt32 begin
     SDL_FLIP_NONE = 0
     SDL_FLIP_HORIZONTAL = 1
     SDL_FLIP_VERTICAL = 2
-    SDL_FLIP_BOTH = 1 | 2
 end
 
 mutable struct SDL_Renderer end
@@ -4206,6 +4928,10 @@ end
 
 function SDL_GetRenderer(window)
     ccall((:SDL_GetRenderer, libsdl2), Ptr{SDL_Renderer}, (Ptr{SDL_Window},), window)
+end
+
+function SDL_RenderGetWindow(renderer)
+    ccall((:SDL_RenderGetWindow, libsdl2), Ptr{SDL_Window}, (Ptr{SDL_Renderer},), renderer)
 end
 
 function SDL_GetRendererInfo(renderer, info)
@@ -4260,12 +4986,24 @@ function SDL_GetTextureScaleMode(texture, scaleMode)
     ccall((:SDL_GetTextureScaleMode, libsdl2), Cint, (Ptr{SDL_Texture}, Ptr{SDL_ScaleMode}), texture, scaleMode)
 end
 
+function SDL_SetTextureUserData(texture, userdata)
+    ccall((:SDL_SetTextureUserData, libsdl2), Cint, (Ptr{SDL_Texture}, Ptr{Cvoid}), texture, userdata)
+end
+
+function SDL_GetTextureUserData(texture)
+    ccall((:SDL_GetTextureUserData, libsdl2), Ptr{Cvoid}, (Ptr{SDL_Texture},), texture)
+end
+
 function SDL_UpdateTexture(texture, rect, pixels, pitch)
     ccall((:SDL_UpdateTexture, libsdl2), Cint, (Ptr{SDL_Texture}, Ptr{SDL_Rect}, Ptr{Cvoid}, Cint), texture, rect, pixels, pitch)
 end
 
 function SDL_UpdateYUVTexture(texture, rect, Yplane, Ypitch, Uplane, Upitch, Vplane, Vpitch)
     ccall((:SDL_UpdateYUVTexture, libsdl2), Cint, (Ptr{SDL_Texture}, Ptr{SDL_Rect}, Ptr{Uint8}, Cint, Ptr{Uint8}, Cint, Ptr{Uint8}, Cint), texture, rect, Yplane, Ypitch, Uplane, Upitch, Vplane, Vpitch)
+end
+
+function SDL_UpdateNVTexture(texture, rect, Yplane, Ypitch, UVplane, UVpitch)
+    ccall((:SDL_UpdateNVTexture, libsdl2), Cint, (Ptr{SDL_Texture}, Ptr{SDL_Rect}, Ptr{Uint8}, Cint, Ptr{Uint8}, Cint), texture, rect, Yplane, Ypitch, UVplane, UVpitch)
 end
 
 function SDL_LockTexture(texture, rect, pixels, pitch)
@@ -4334,6 +5072,14 @@ end
 
 function SDL_RenderGetScale(renderer, scaleX, scaleY)
     ccall((:SDL_RenderGetScale, libsdl2), Cvoid, (Ptr{SDL_Renderer}, Ptr{Cfloat}, Ptr{Cfloat}), renderer, scaleX, scaleY)
+end
+
+function SDL_RenderWindowToLogical(renderer, windowX, windowY, logicalX, logicalY)
+    ccall((:SDL_RenderWindowToLogical, libsdl2), Cvoid, (Ptr{SDL_Renderer}, Cint, Cint, Ptr{Cfloat}, Ptr{Cfloat}), renderer, windowX, windowY, logicalX, logicalY)
+end
+
+function SDL_RenderLogicalToWindow(renderer, logicalX, logicalY, windowX, windowY)
+    ccall((:SDL_RenderLogicalToWindow, libsdl2), Cvoid, (Ptr{SDL_Renderer}, Cfloat, Cfloat, Ptr{Cint}, Ptr{Cint}), renderer, logicalX, logicalY, windowX, windowY)
 end
 
 function SDL_SetRenderDrawColor(renderer, r, g, b, a)
@@ -4436,6 +5182,14 @@ function SDL_RenderCopyExF(renderer, texture, srcrect, dstrect, angle, center, f
     ccall((:SDL_RenderCopyExF, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{SDL_Texture}, Ptr{SDL_Rect}, Ptr{SDL_FRect}, Cdouble, Ptr{SDL_FPoint}, SDL_RendererFlip), renderer, texture, srcrect, dstrect, angle, center, flip)
 end
 
+function SDL_RenderGeometry(renderer, texture, vertices, num_vertices, indices, num_indices)
+    ccall((:SDL_RenderGeometry, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{SDL_Texture}, Ptr{SDL_Vertex}, Cint, Ptr{Cint}, Cint), renderer, texture, vertices, num_vertices, indices, num_indices)
+end
+
+function SDL_RenderGeometryRaw(renderer, texture, xy, xy_stride, color, color_stride, uv, uv_stride, num_vertices, indices, num_indices, size_indices)
+    ccall((:SDL_RenderGeometryRaw, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{SDL_Texture}, Ptr{Cfloat}, Cint, Ptr{SDL_Color}, Cint, Ptr{Cfloat}, Cint, Cint, Ptr{Cvoid}, Cint, Cint), renderer, texture, xy, xy_stride, color, color_stride, uv, uv_stride, num_vertices, indices, num_indices, size_indices)
+end
+
 function SDL_RenderReadPixels(renderer, rect, format, pixels, pitch)
     ccall((:SDL_RenderReadPixels, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{SDL_Rect}, Uint32, Ptr{Cvoid}, Cint), renderer, rect, format, pixels, pitch)
 end
@@ -4472,73 +5226,8 @@ function SDL_RenderGetMetalCommandEncoder(renderer)
     ccall((:SDL_RenderGetMetalCommandEncoder, libsdl2), Ptr{Cvoid}, (Ptr{SDL_Renderer},), renderer)
 end
 
-mutable struct _SDL_Sensor end
-
-const SDL_Sensor = _SDL_Sensor
-
-const SDL_SensorID = Sint32
-
-@cenum SDL_SensorType::Int32 begin
-    SDL_SENSOR_INVALID = -1
-    SDL_SENSOR_UNKNOWN = 0
-    SDL_SENSOR_ACCEL = 1
-    SDL_SENSOR_GYRO = 2
-end
-
-function SDL_NumSensors()
-    ccall((:SDL_NumSensors, libsdl2), Cint, ())
-end
-
-function SDL_SensorGetDeviceName(device_index)
-    ccall((:SDL_SensorGetDeviceName, libsdl2), Ptr{Cchar}, (Cint,), device_index)
-end
-
-function SDL_SensorGetDeviceType(device_index)
-    ccall((:SDL_SensorGetDeviceType, libsdl2), SDL_SensorType, (Cint,), device_index)
-end
-
-function SDL_SensorGetDeviceNonPortableType(device_index)
-    ccall((:SDL_SensorGetDeviceNonPortableType, libsdl2), Cint, (Cint,), device_index)
-end
-
-function SDL_SensorGetDeviceInstanceID(device_index)
-    ccall((:SDL_SensorGetDeviceInstanceID, libsdl2), SDL_SensorID, (Cint,), device_index)
-end
-
-function SDL_SensorOpen(device_index)
-    ccall((:SDL_SensorOpen, libsdl2), Ptr{SDL_Sensor}, (Cint,), device_index)
-end
-
-function SDL_SensorFromInstanceID(instance_id)
-    ccall((:SDL_SensorFromInstanceID, libsdl2), Ptr{SDL_Sensor}, (SDL_SensorID,), instance_id)
-end
-
-function SDL_SensorGetName(sensor)
-    ccall((:SDL_SensorGetName, libsdl2), Ptr{Cchar}, (Ptr{SDL_Sensor},), sensor)
-end
-
-function SDL_SensorGetType(sensor)
-    ccall((:SDL_SensorGetType, libsdl2), SDL_SensorType, (Ptr{SDL_Sensor},), sensor)
-end
-
-function SDL_SensorGetNonPortableType(sensor)
-    ccall((:SDL_SensorGetNonPortableType, libsdl2), Cint, (Ptr{SDL_Sensor},), sensor)
-end
-
-function SDL_SensorGetInstanceID(sensor)
-    ccall((:SDL_SensorGetInstanceID, libsdl2), SDL_SensorID, (Ptr{SDL_Sensor},), sensor)
-end
-
-function SDL_SensorGetData(sensor, data, num_values)
-    ccall((:SDL_SensorGetData, libsdl2), Cint, (Ptr{SDL_Sensor}, Ptr{Cfloat}, Cint), sensor, data, num_values)
-end
-
-function SDL_SensorClose(sensor)
-    ccall((:SDL_SensorClose, libsdl2), Cvoid, (Ptr{SDL_Sensor},), sensor)
-end
-
-function SDL_SensorUpdate()
-    ccall((:SDL_SensorUpdate, libsdl2), Cvoid, ())
+function SDL_RenderSetVSync(renderer, vsync)
+    ccall((:SDL_RenderSetVSync, libsdl2), Cint, (Ptr{SDL_Renderer}, Cint), renderer, vsync)
 end
 
 function SDL_CreateShapedWindow(title, x, y, w, h, flags)
@@ -4557,7 +5246,7 @@ end
 end
 
 struct SDL_WindowShapeParams
-    data::NTuple{4,UInt8}
+    data::NTuple{4, UInt8}
 end
 
 function Base.getproperty(x::Ptr{SDL_WindowShapeParams}, f::Symbol)
@@ -4622,6 +5311,10 @@ function SDL_GetTicks()
     ccall((:SDL_GetTicks, libsdl2), Uint32, ())
 end
 
+function SDL_GetTicks64()
+    ccall((:SDL_GetTicks64, libsdl2), Uint64, ())
+end
+
 function SDL_GetPerformanceCounter()
     ccall((:SDL_GetPerformanceCounter, libsdl2), Uint64, ())
 end
@@ -4663,6 +5356,19 @@ end
 
 function SDL_GetRevisionNumber()
     ccall((:SDL_GetRevisionNumber, libsdl2), Cint, ())
+end
+
+struct SDL_Locale
+    language::Ptr{Cchar}
+    country::Ptr{Cchar}
+end
+
+function SDL_GetPreferredLocales()
+    ccall((:SDL_GetPreferredLocales, libsdl2), Ptr{SDL_Locale}, ())
+end
+
+function SDL_OpenURL(url)
+    ccall((:SDL_OpenURL, libsdl2), Cint, (Ptr{Cchar},), url)
 end
 
 function SDL_Init(flags)
@@ -4745,16 +5451,20 @@ function Mix_OpenAudioDevice(frequency, format, channels, chunksize, device, all
     ccall((:Mix_OpenAudioDevice, libsdl2_mixer), Cint, (Cint, Uint16, Cint, Cint, Ptr{Cchar}, Cint), frequency, format, channels, chunksize, device, allowed_changes)
 end
 
-function Mix_AllocateChannels(numchans)
-    ccall((:Mix_AllocateChannels, libsdl2_mixer), Cint, (Cint,), numchans)
-end
-
 function Mix_QuerySpec(frequency, format, channels)
     ccall((:Mix_QuerySpec, libsdl2_mixer), Cint, (Ptr{Cint}, Ptr{Uint16}, Ptr{Cint}), frequency, format, channels)
 end
 
+function Mix_AllocateChannels(numchans)
+    ccall((:Mix_AllocateChannels, libsdl2_mixer), Cint, (Cint,), numchans)
+end
+
 function Mix_LoadWAV_RW(src, freesrc)
     ccall((:Mix_LoadWAV_RW, libsdl2_mixer), Ptr{Mix_Chunk}, (Ptr{SDL_RWops}, Cint), src, freesrc)
+end
+
+function Mix_LoadWAV(file)
+    ccall((:Mix_LoadWAV, libsdl2_mixer), Ptr{Mix_Chunk}, (Ptr{Cchar},), file)
 end
 
 function Mix_LoadMUS(file)
@@ -4811,6 +5521,26 @@ end
 
 function Mix_GetMusicType(music)
     ccall((:Mix_GetMusicType, libsdl2_mixer), Mix_MusicType, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicTitle(music)
+    ccall((:Mix_GetMusicTitle, libsdl2_mixer), Ptr{Cchar}, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicTitleTag(music)
+    ccall((:Mix_GetMusicTitleTag, libsdl2_mixer), Ptr{Cchar}, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicArtistTag(music)
+    ccall((:Mix_GetMusicArtistTag, libsdl2_mixer), Ptr{Cchar}, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicAlbumTag(music)
+    ccall((:Mix_GetMusicAlbumTag, libsdl2_mixer), Ptr{Cchar}, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicCopyrightTag(music)
+    ccall((:Mix_GetMusicCopyrightTag, libsdl2_mixer), Ptr{Cchar}, (Ptr{Mix_Music},), music)
 end
 
 function Mix_SetPostMix(mix_func, arg)
@@ -4895,6 +5625,10 @@ function Mix_GroupNewer(tag)
     ccall((:Mix_GroupNewer, libsdl2_mixer), Cint, (Cint,), tag)
 end
 
+function Mix_PlayChannel(channel, chunk, loops)
+    ccall((:Mix_PlayChannel, libsdl2_mixer), Cint, (Cint, Ptr{Mix_Chunk}, Cint), channel, chunk, loops)
+end
+
 function Mix_PlayChannelTimed(channel, chunk, loops, ticks)
     ccall((:Mix_PlayChannelTimed, libsdl2_mixer), Cint, (Cint, Ptr{Mix_Chunk}, Cint, Cint), channel, chunk, loops, ticks)
 end
@@ -4911,6 +5645,10 @@ function Mix_FadeInMusicPos(music, loops, ms, position)
     ccall((:Mix_FadeInMusicPos, libsdl2_mixer), Cint, (Ptr{Mix_Music}, Cint, Cint, Cdouble), music, loops, ms, position)
 end
 
+function Mix_FadeInChannel(channel, chunk, loops, ms)
+    ccall((:Mix_FadeInChannel, libsdl2_mixer), Cint, (Cint, Ptr{Mix_Chunk}, Cint, Cint), channel, chunk, loops, ms)
+end
+
 function Mix_FadeInChannelTimed(channel, chunk, loops, ms, ticks)
     ccall((:Mix_FadeInChannelTimed, libsdl2_mixer), Cint, (Cint, Ptr{Mix_Chunk}, Cint, Cint, Cint), channel, chunk, loops, ms, ticks)
 end
@@ -4925,6 +5663,14 @@ end
 
 function Mix_VolumeMusic(volume)
     ccall((:Mix_VolumeMusic, libsdl2_mixer), Cint, (Cint,), volume)
+end
+
+function Mix_GetMusicVolume(music)
+    ccall((:Mix_GetMusicVolume, libsdl2_mixer), Cint, (Ptr{Mix_Music},), music)
+end
+
+function Mix_MasterVolume(volume)
+    ccall((:Mix_MasterVolume, libsdl2_mixer), Cint, (Cint,), volume)
 end
 
 function Mix_HaltChannel(channel)
@@ -4991,8 +5737,32 @@ function Mix_PausedMusic()
     ccall((:Mix_PausedMusic, libsdl2_mixer), Cint, ())
 end
 
+function Mix_ModMusicJumpToOrder(order)
+    ccall((:Mix_ModMusicJumpToOrder, libsdl2_mixer), Cint, (Cint,), order)
+end
+
 function Mix_SetMusicPosition(position)
     ccall((:Mix_SetMusicPosition, libsdl2_mixer), Cint, (Cdouble,), position)
+end
+
+function Mix_GetMusicPosition(music)
+    ccall((:Mix_GetMusicPosition, libsdl2_mixer), Cdouble, (Ptr{Mix_Music},), music)
+end
+
+function Mix_MusicDuration(music)
+    ccall((:Mix_MusicDuration, libsdl2_mixer), Cdouble, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicLoopStartTime(music)
+    ccall((:Mix_GetMusicLoopStartTime, libsdl2_mixer), Cdouble, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicLoopEndTime(music)
+    ccall((:Mix_GetMusicLoopEndTime, libsdl2_mixer), Cdouble, (Ptr{Mix_Music},), music)
+end
+
+function Mix_GetMusicLoopLengthTime(music)
+    ccall((:Mix_GetMusicLoopLengthTime, libsdl2_mixer), Cdouble, (Ptr{Mix_Music},), music)
 end
 
 function Mix_Playing(channel)
@@ -5027,6 +5797,14 @@ function Mix_EachSoundFont(_function, data)
     ccall((:Mix_EachSoundFont, libsdl2_mixer), Cint, (Ptr{Cvoid}, Ptr{Cvoid}), _function, data)
 end
 
+function Mix_SetTimidityCfg(path)
+    ccall((:Mix_SetTimidityCfg, libsdl2_mixer), Cint, (Ptr{Cchar},), path)
+end
+
+function Mix_GetTimidityCfg()
+    ccall((:Mix_GetTimidityCfg, libsdl2_mixer), Ptr{Cchar}, ())
+end
+
 function Mix_GetChunk(channel)
     ccall((:Mix_GetChunk, libsdl2_mixer), Ptr{Mix_Chunk}, (Cint,), channel)
 end
@@ -5044,6 +5822,8 @@ end
     IMG_INIT_PNG = 2
     IMG_INIT_TIF = 4
     IMG_INIT_WEBP = 8
+    IMG_INIT_JXL = 16
+    IMG_INIT_AVIF = 32
 end
 
 function IMG_Init(flags)
@@ -5078,6 +5858,10 @@ function IMG_LoadTextureTyped_RW(renderer, src, freesrc, type)
     ccall((:IMG_LoadTextureTyped_RW, libsdl2_image), Ptr{SDL_Texture}, (Ptr{SDL_Renderer}, Ptr{SDL_RWops}, Cint, Ptr{Cchar}), renderer, src, freesrc, type)
 end
 
+function IMG_isAVIF(src)
+    ccall((:IMG_isAVIF, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
+end
+
 function IMG_isICO(src)
     ccall((:IMG_isICO, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
 end
@@ -5096,6 +5880,10 @@ end
 
 function IMG_isJPG(src)
     ccall((:IMG_isJPG, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
+end
+
+function IMG_isJXL(src)
+    ccall((:IMG_isJXL, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
 end
 
 function IMG_isLBM(src)
@@ -5118,6 +5906,10 @@ function IMG_isSVG(src)
     ccall((:IMG_isSVG, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
 end
 
+function IMG_isQOI(src)
+    ccall((:IMG_isQOI, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
+end
+
 function IMG_isTIF(src)
     ccall((:IMG_isTIF, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
 end
@@ -5136,6 +5928,10 @@ end
 
 function IMG_isWEBP(src)
     ccall((:IMG_isWEBP, libsdl2_image), Cint, (Ptr{SDL_RWops},), src)
+end
+
+function IMG_LoadAVIF_RW(src)
+    ccall((:IMG_LoadAVIF_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
 end
 
 function IMG_LoadICO_RW(src)
@@ -5158,6 +5954,10 @@ function IMG_LoadJPG_RW(src)
     ccall((:IMG_LoadJPG_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
 end
 
+function IMG_LoadJXL_RW(src)
+    ccall((:IMG_LoadJXL_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
+end
+
 function IMG_LoadLBM_RW(src)
     ccall((:IMG_LoadLBM_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
 end
@@ -5176,6 +5976,10 @@ end
 
 function IMG_LoadSVG_RW(src)
     ccall((:IMG_LoadSVG_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
+end
+
+function IMG_LoadQOI_RW(src)
+    ccall((:IMG_LoadQOI_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
 end
 
 function IMG_LoadTGA_RW(src)
@@ -5202,8 +6006,16 @@ function IMG_LoadWEBP_RW(src)
     ccall((:IMG_LoadWEBP_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops},), src)
 end
 
+function IMG_LoadSizedSVG_RW(src, width, height)
+    ccall((:IMG_LoadSizedSVG_RW, libsdl2_image), Ptr{SDL_Surface}, (Ptr{SDL_RWops}, Cint, Cint), src, width, height)
+end
+
 function IMG_ReadXPMFromArray(xpm)
     ccall((:IMG_ReadXPMFromArray, libsdl2_image), Ptr{SDL_Surface}, (Ptr{Ptr{Cchar}},), xpm)
+end
+
+function IMG_ReadXPMFromArrayToRGB888(xpm)
+    ccall((:IMG_ReadXPMFromArrayToRGB888, libsdl2_image), Ptr{SDL_Surface}, (Ptr{Ptr{Cchar}},), xpm)
 end
 
 function IMG_SavePNG(surface, file)
@@ -5222,6 +6034,50 @@ function IMG_SaveJPG_RW(surface, dst, freedst, quality)
     ccall((:IMG_SaveJPG_RW, libsdl2_image), Cint, (Ptr{SDL_Surface}, Ptr{SDL_RWops}, Cint, Cint), surface, dst, freedst, quality)
 end
 
+struct IMG_Animation
+    w::Cint
+    h::Cint
+    count::Cint
+    frames::Ptr{Ptr{SDL_Surface}}
+    delays::Ptr{Cint}
+end
+
+function IMG_LoadAnimation(file)
+    ccall((:IMG_LoadAnimation, libsdl2_image), Ptr{IMG_Animation}, (Ptr{Cchar},), file)
+end
+
+function IMG_LoadAnimation_RW(src, freesrc)
+    ccall((:IMG_LoadAnimation_RW, libsdl2_image), Ptr{IMG_Animation}, (Ptr{SDL_RWops}, Cint), src, freesrc)
+end
+
+function IMG_LoadAnimationTyped_RW(src, freesrc, type)
+    ccall((:IMG_LoadAnimationTyped_RW, libsdl2_image), Ptr{IMG_Animation}, (Ptr{SDL_RWops}, Cint, Ptr{Cchar}), src, freesrc, type)
+end
+
+function IMG_FreeAnimation(anim)
+    ccall((:IMG_FreeAnimation, libsdl2_image), Cvoid, (Ptr{IMG_Animation},), anim)
+end
+
+function IMG_LoadGIFAnimation_RW(src)
+    ccall((:IMG_LoadGIFAnimation_RW, libsdl2_image), Ptr{IMG_Animation}, (Ptr{SDL_RWops},), src)
+end
+
+mutable struct _TTF_Font end
+
+const TTF_Font = _TTF_Font
+
+function TTF_RenderText_Shaded(font, text, fg, bg)
+    ccall((:TTF_RenderText_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Ptr{Cchar}, SDL_Color, SDL_Color), font, text, fg, bg)
+end
+
+function TTF_RenderUTF8_Shaded(font, text, fg, bg)
+    ccall((:TTF_RenderUTF8_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Ptr{Cchar}, SDL_Color, SDL_Color), font, text, fg, bg)
+end
+
+function TTF_RenderUNICODE_Shaded(font, text, fg, bg)
+    ccall((:TTF_RenderUNICODE_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Ptr{Uint16}, SDL_Color, SDL_Color), font, text, fg, bg)
+end
+
 function TTF_Linked_Version()
     ccall((:TTF_Linked_Version, libsdl2_ttf), Ptr{SDL_version}, ())
 end
@@ -5229,10 +6085,6 @@ end
 function TTF_ByteSwappedUNICODE(swapped)
     ccall((:TTF_ByteSwappedUNICODE, libsdl2_ttf), Cvoid, (Cint,), swapped)
 end
-
-mutable struct _TTF_Font end
-
-const TTF_Font = _TTF_Font
 
 function TTF_Init()
     ccall((:TTF_Init, libsdl2_ttf), Cint, ())
@@ -5354,18 +6206,6 @@ function TTF_RenderGlyph_Solid(font, ch, fg)
     ccall((:TTF_RenderGlyph_Solid, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Uint16, SDL_Color), font, ch, fg)
 end
 
-function TTF_RenderText_Shaded(font, text, fg, bg)
-    ccall((:TTF_RenderText_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Ptr{Cchar}, SDL_Color, SDL_Color), font, text, fg, bg)
-end
-
-function TTF_RenderUTF8_Shaded(font, text, fg, bg)
-    ccall((:TTF_RenderUTF8_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Ptr{Cchar}, SDL_Color, SDL_Color), font, text, fg, bg)
-end
-
-function TTF_RenderUNICODE_Shaded(font, text, fg, bg)
-    ccall((:TTF_RenderUNICODE_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Ptr{Uint16}, SDL_Color, SDL_Color), font, text, fg, bg)
-end
-
 function TTF_RenderGlyph_Shaded(font, ch, fg, bg)
     ccall((:TTF_RenderGlyph_Shaded, libsdl2_ttf), Ptr{SDL_Surface}, (Ptr{TTF_Font}, Uint16, SDL_Color, SDL_Color), font, ch, fg, bg)
 end
@@ -5418,139 +6258,513 @@ function TTF_GetFontKerningSizeGlyphs(font, previous_ch, ch)
     ccall((:TTF_GetFontKerningSizeGlyphs, libsdl2_ttf), Cint, (Ptr{TTF_Font}, Uint16, Uint16), font, previous_ch, ch)
 end
 
-struct __JL_Ctag_245
-    data::NTuple{24,UInt8}
+struct FPSmanager
+    framecount::Uint32
+    rateticks::Cfloat
+    baseticks::Uint32
+    lastticks::Uint32
+    rate::Uint32
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_245}, f::Symbol)
-    f === :stdio && return Ptr{__JL_Ctag_246}(x + 0)
-    f === :mem && return Ptr{__JL_Ctag_247}(x + 0)
-    f === :unknown && return Ptr{__JL_Ctag_248}(x + 0)
-    return getfield(x, f)
+function SDL_initFramerate(manager)
+    ccall((:SDL_initFramerate, libsdl2), Cvoid, (Ptr{FPSmanager},), manager)
 end
 
-function Base.getproperty(x::__JL_Ctag_245, f::Symbol)
-    r = Ref{__JL_Ctag_245}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_245}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
+function SDL_setFramerate(manager, rate)
+    ccall((:SDL_setFramerate, libsdl2), Cint, (Ptr{FPSmanager}, Uint32), manager, rate)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_245}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function SDL_getFramerate(manager)
+    ccall((:SDL_getFramerate, libsdl2), Cint, (Ptr{FPSmanager},), manager)
 end
 
-struct __JL_Ctag_246
+function SDL_getFramecount(manager)
+    ccall((:SDL_getFramecount, libsdl2), Cint, (Ptr{FPSmanager},), manager)
+end
+
+function SDL_framerateDelay(manager)
+    ccall((:SDL_framerateDelay, libsdl2), Uint32, (Ptr{FPSmanager},), manager)
+end
+
+function pixelColor(renderer, x, y, color)
+    ccall((:pixelColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Uint32), renderer, x, y, color)
+end
+
+function pixelRGBA(renderer, x, y, r, g, b, a)
+    ccall((:pixelRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, r, g, b, a)
+end
+
+function hlineColor(renderer, x1, x2, y, color)
+    ccall((:hlineColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint32), renderer, x1, x2, y, color)
+end
+
+function hlineRGBA(renderer, x1, x2, y, r, g, b, a)
+    ccall((:hlineRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, x2, y, r, g, b, a)
+end
+
+function vlineColor(renderer, x, y1, y2, color)
+    ccall((:vlineColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint32), renderer, x, y1, y2, color)
+end
+
+function vlineRGBA(renderer, x, y1, y2, r, g, b, a)
+    ccall((:vlineRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y1, y2, r, g, b, a)
+end
+
+function rectangleColor(renderer, x1, y1, x2, y2, color)
+    ccall((:rectangleColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, color)
+end
+
+function rectangleRGBA(renderer, x1, y1, x2, y2, r, g, b, a)
+    ccall((:rectangleRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, r, g, b, a)
+end
+
+function roundedRectangleColor(renderer, x1, y1, x2, y2, rad, color)
+    ccall((:roundedRectangleColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, rad, color)
+end
+
+function roundedRectangleRGBA(renderer, x1, y1, x2, y2, rad, r, g, b, a)
+    ccall((:roundedRectangleRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, rad, r, g, b, a)
+end
+
+function boxColor(renderer, x1, y1, x2, y2, color)
+    ccall((:boxColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, color)
+end
+
+function boxRGBA(renderer, x1, y1, x2, y2, r, g, b, a)
+    ccall((:boxRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, r, g, b, a)
+end
+
+function roundedBoxColor(renderer, x1, y1, x2, y2, rad, color)
+    ccall((:roundedBoxColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, rad, color)
+end
+
+function roundedBoxRGBA(renderer, x1, y1, x2, y2, rad, r, g, b, a)
+    ccall((:roundedBoxRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, rad, r, g, b, a)
+end
+
+function lineColor(renderer, x1, y1, x2, y2, color)
+    ccall((:lineColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, color)
+end
+
+function lineRGBA(renderer, x1, y1, x2, y2, r, g, b, a)
+    ccall((:lineRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, r, g, b, a)
+end
+
+function aalineColor(renderer, x1, y1, x2, y2, color)
+    ccall((:aalineColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, color)
+end
+
+function aalineRGBA(renderer, x1, y1, x2, y2, r, g, b, a)
+    ccall((:aalineRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, r, g, b, a)
+end
+
+function thickLineColor(renderer, x1, y1, x2, y2, width, color)
+    ccall((:thickLineColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint32), renderer, x1, y1, x2, y2, width, color)
+end
+
+function thickLineRGBA(renderer, x1, y1, x2, y2, width, r, g, b, a)
+    ccall((:thickLineRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, width, r, g, b, a)
+end
+
+function circleColor(renderer, x, y, rad, color)
+    ccall((:circleColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rad, color)
+end
+
+function circleRGBA(renderer, x, y, rad, r, g, b, a)
+    ccall((:circleRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rad, r, g, b, a)
+end
+
+function arcColor(renderer, x, y, rad, start, _end, color)
+    ccall((:arcColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rad, start, _end, color)
+end
+
+function arcRGBA(renderer, x, y, rad, start, _end, r, g, b, a)
+    ccall((:arcRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rad, start, _end, r, g, b, a)
+end
+
+function aacircleColor(renderer, x, y, rad, color)
+    ccall((:aacircleColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rad, color)
+end
+
+function aacircleRGBA(renderer, x, y, rad, r, g, b, a)
+    ccall((:aacircleRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rad, r, g, b, a)
+end
+
+function filledCircleColor(renderer, x, y, r, color)
+    ccall((:filledCircleColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint32), renderer, x, y, r, color)
+end
+
+function filledCircleRGBA(renderer, x, y, rad, r, g, b, a)
+    ccall((:filledCircleRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rad, r, g, b, a)
+end
+
+function ellipseColor(renderer, x, y, rx, ry, color)
+    ccall((:ellipseColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rx, ry, color)
+end
+
+function ellipseRGBA(renderer, x, y, rx, ry, r, g, b, a)
+    ccall((:ellipseRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rx, ry, r, g, b, a)
+end
+
+function aaellipseColor(renderer, x, y, rx, ry, color)
+    ccall((:aaellipseColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rx, ry, color)
+end
+
+function aaellipseRGBA(renderer, x, y, rx, ry, r, g, b, a)
+    ccall((:aaellipseRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rx, ry, r, g, b, a)
+end
+
+function filledEllipseColor(renderer, x, y, rx, ry, color)
+    ccall((:filledEllipseColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rx, ry, color)
+end
+
+function filledEllipseRGBA(renderer, x, y, rx, ry, r, g, b, a)
+    ccall((:filledEllipseRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rx, ry, r, g, b, a)
+end
+
+function pieColor(renderer, x, y, rad, start, _end, color)
+    ccall((:pieColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rad, start, _end, color)
+end
+
+function pieRGBA(renderer, x, y, rad, start, _end, r, g, b, a)
+    ccall((:pieRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rad, start, _end, r, g, b, a)
+end
+
+function filledPieColor(renderer, x, y, rad, start, _end, color)
+    ccall((:filledPieColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x, y, rad, start, _end, color)
+end
+
+function filledPieRGBA(renderer, x, y, rad, start, _end, r, g, b, a)
+    ccall((:filledPieRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x, y, rad, start, _end, r, g, b, a)
+end
+
+function trigonColor(renderer, x1, y1, x2, y2, x3, y3, color)
+    ccall((:trigonColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, x3, y3, color)
+end
+
+function trigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+    ccall((:trigonRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+end
+
+function aatrigonColor(renderer, x1, y1, x2, y2, x3, y3, color)
+    ccall((:aatrigonColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, x3, y3, color)
+end
+
+function aatrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+    ccall((:aatrigonRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+end
+
+function filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, color)
+    ccall((:filledTrigonColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Sint16, Uint32), renderer, x1, y1, x2, y2, x3, y3, color)
+end
+
+function filledTrigonRGBA(renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+    ccall((:filledTrigonRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8), renderer, x1, y1, x2, y2, x3, y3, r, g, b, a)
+end
+
+function polygonColor(renderer, vx, vy, n, color)
+    ccall((:polygonColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Uint32), renderer, vx, vy, n, color)
+end
+
+function polygonRGBA(renderer, vx, vy, n, r, g, b, a)
+    ccall((:polygonRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Uint8, Uint8, Uint8, Uint8), renderer, vx, vy, n, r, g, b, a)
+end
+
+function aapolygonColor(renderer, vx, vy, n, color)
+    ccall((:aapolygonColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Uint32), renderer, vx, vy, n, color)
+end
+
+function aapolygonRGBA(renderer, vx, vy, n, r, g, b, a)
+    ccall((:aapolygonRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Uint8, Uint8, Uint8, Uint8), renderer, vx, vy, n, r, g, b, a)
+end
+
+function filledPolygonColor(renderer, vx, vy, n, color)
+    ccall((:filledPolygonColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Uint32), renderer, vx, vy, n, color)
+end
+
+function filledPolygonRGBA(renderer, vx, vy, n, r, g, b, a)
+    ccall((:filledPolygonRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Uint8, Uint8, Uint8, Uint8), renderer, vx, vy, n, r, g, b, a)
+end
+
+function texturedPolygon(renderer, vx, vy, n, texture, texture_dx, texture_dy)
+    ccall((:texturedPolygon, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Ptr{SDL_Surface}, Cint, Cint), renderer, vx, vy, n, texture, texture_dx, texture_dy)
+end
+
+function bezierColor(renderer, vx, vy, n, s, color)
+    ccall((:bezierColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Cint, Uint32), renderer, vx, vy, n, s, color)
+end
+
+function bezierRGBA(renderer, vx, vy, n, s, r, g, b, a)
+    ccall((:bezierRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Ptr{Sint16}, Ptr{Sint16}, Cint, Cint, Uint8, Uint8, Uint8, Uint8), renderer, vx, vy, n, s, r, g, b, a)
+end
+
+function gfxPrimitivesSetFont(fontdata, cw, ch)
+    ccall((:gfxPrimitivesSetFont, libsdl2), Cvoid, (Ptr{Cvoid}, Uint32, Uint32), fontdata, cw, ch)
+end
+
+function gfxPrimitivesSetFontRotation(rotation)
+    ccall((:gfxPrimitivesSetFontRotation, libsdl2), Cvoid, (Uint32,), rotation)
+end
+
+function characterColor(renderer, x, y, c, color)
+    ccall((:characterColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Cchar, Uint32), renderer, x, y, c, color)
+end
+
+function characterRGBA(renderer, x, y, c, r, g, b, a)
+    ccall((:characterRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Cchar, Uint8, Uint8, Uint8, Uint8), renderer, x, y, c, r, g, b, a)
+end
+
+function stringColor(renderer, x, y, s, color)
+    ccall((:stringColor, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Ptr{Cchar}, Uint32), renderer, x, y, s, color)
+end
+
+function stringRGBA(renderer, x, y, s, r, g, b, a)
+    ccall((:stringRGBA, libsdl2), Cint, (Ptr{SDL_Renderer}, Sint16, Sint16, Ptr{Cchar}, Uint8, Uint8, Uint8, Uint8), renderer, x, y, s, r, g, b, a)
+end
+
+function SDL_imageFilterMMXdetect()
+    ccall((:SDL_imageFilterMMXdetect, libsdl2), Cint, ())
+end
+
+function SDL_imageFilterMMXoff()
+    ccall((:SDL_imageFilterMMXoff, libsdl2), Cvoid, ())
+end
+
+function SDL_imageFilterMMXon()
+    ccall((:SDL_imageFilterMMXon, libsdl2), Cvoid, ())
+end
+
+function SDL_imageFilterAdd(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterAdd, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterMean(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterMean, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterSub(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterSub, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterAbsDiff(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterAbsDiff, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterMult(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterMult, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterMultNor(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterMultNor, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterMultDivby2(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterMultDivby2, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterMultDivby4(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterMultDivby4, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterBitAnd(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterBitAnd, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterBitOr(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterBitOr, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterDiv(Src1, Src2, Dest, length)
+    ccall((:SDL_imageFilterDiv, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Src2, Dest, length)
+end
+
+function SDL_imageFilterBitNegation(Src1, Dest, length)
+    ccall((:SDL_imageFilterBitNegation, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint), Src1, Dest, length)
+end
+
+function SDL_imageFilterAddByte(Src1, Dest, length, C)
+    ccall((:SDL_imageFilterAddByte, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, C)
+end
+
+function SDL_imageFilterAddUint(Src1, Dest, length, C)
+    ccall((:SDL_imageFilterAddUint, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuint), Src1, Dest, length, C)
+end
+
+function SDL_imageFilterAddByteToHalf(Src1, Dest, length, C)
+    ccall((:SDL_imageFilterAddByteToHalf, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, C)
+end
+
+function SDL_imageFilterSubByte(Src1, Dest, length, C)
+    ccall((:SDL_imageFilterSubByte, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, C)
+end
+
+function SDL_imageFilterSubUint(Src1, Dest, length, C)
+    ccall((:SDL_imageFilterSubUint, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuint), Src1, Dest, length, C)
+end
+
+function SDL_imageFilterShiftRight(Src1, Dest, length, N)
+    ccall((:SDL_imageFilterShiftRight, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, N)
+end
+
+function SDL_imageFilterShiftRightUint(Src1, Dest, length, N)
+    ccall((:SDL_imageFilterShiftRightUint, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, N)
+end
+
+function SDL_imageFilterMultByByte(Src1, Dest, length, C)
+    ccall((:SDL_imageFilterMultByByte, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, C)
+end
+
+function SDL_imageFilterShiftRightAndMultByByte(Src1, Dest, length, N, C)
+    ccall((:SDL_imageFilterShiftRightAndMultByByte, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar, Cuchar), Src1, Dest, length, N, C)
+end
+
+function SDL_imageFilterShiftLeftByte(Src1, Dest, length, N)
+    ccall((:SDL_imageFilterShiftLeftByte, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, N)
+end
+
+function SDL_imageFilterShiftLeftUint(Src1, Dest, length, N)
+    ccall((:SDL_imageFilterShiftLeftUint, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, N)
+end
+
+function SDL_imageFilterShiftLeft(Src1, Dest, length, N)
+    ccall((:SDL_imageFilterShiftLeft, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, N)
+end
+
+function SDL_imageFilterBinarizeUsingThreshold(Src1, Dest, length, T)
+    ccall((:SDL_imageFilterBinarizeUsingThreshold, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar), Src1, Dest, length, T)
+end
+
+function SDL_imageFilterClipToRange(Src1, Dest, length, Tmin, Tmax)
+    ccall((:SDL_imageFilterClipToRange, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cuchar, Cuchar), Src1, Dest, length, Tmin, Tmax)
+end
+
+function SDL_imageFilterNormalizeLinear(Src, Dest, length, Cmin, Cmax, Nmin, Nmax)
+    ccall((:SDL_imageFilterNormalizeLinear, libsdl2), Cint, (Ptr{Cuchar}, Ptr{Cuchar}, Cuint, Cint, Cint, Cint, Cint), Src, Dest, length, Cmin, Cmax, Nmin, Nmax)
+end
+
+function rotozoomSurface(src, angle, zoom, smooth)
+    ccall((:rotozoomSurface, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_Surface}, Cdouble, Cdouble, Cint), src, angle, zoom, smooth)
+end
+
+function rotozoomSurfaceXY(src, angle, zoomx, zoomy, smooth)
+    ccall((:rotozoomSurfaceXY, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_Surface}, Cdouble, Cdouble, Cdouble, Cint), src, angle, zoomx, zoomy, smooth)
+end
+
+function rotozoomSurfaceSize(width, height, angle, zoom, dstwidth, dstheight)
+    ccall((:rotozoomSurfaceSize, libsdl2), Cvoid, (Cint, Cint, Cdouble, Cdouble, Ptr{Cint}, Ptr{Cint}), width, height, angle, zoom, dstwidth, dstheight)
+end
+
+function rotozoomSurfaceSizeXY(width, height, angle, zoomx, zoomy, dstwidth, dstheight)
+    ccall((:rotozoomSurfaceSizeXY, libsdl2), Cvoid, (Cint, Cint, Cdouble, Cdouble, Cdouble, Ptr{Cint}, Ptr{Cint}), width, height, angle, zoomx, zoomy, dstwidth, dstheight)
+end
+
+function zoomSurface(src, zoomx, zoomy, smooth)
+    ccall((:zoomSurface, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_Surface}, Cdouble, Cdouble, Cint), src, zoomx, zoomy, smooth)
+end
+
+function zoomSurfaceSize(width, height, zoomx, zoomy, dstwidth, dstheight)
+    ccall((:zoomSurfaceSize, libsdl2), Cvoid, (Cint, Cint, Cdouble, Cdouble, Ptr{Cint}, Ptr{Cint}), width, height, zoomx, zoomy, dstwidth, dstheight)
+end
+
+function shrinkSurface(src, factorx, factory)
+    ccall((:shrinkSurface, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_Surface}, Cint, Cint), src, factorx, factory)
+end
+
+function rotateSurface90Degrees(src, numClockwiseTurns)
+    ccall((:rotateSurface90Degrees, libsdl2), Ptr{SDL_Surface}, (Ptr{SDL_Surface}, Cint), src, numClockwiseTurns)
+end
+
+struct __JL_Ctag_476
     autoclose::SDL_bool
     fp::Ptr{Libc.FILE}
 end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_246}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_476}, f::Symbol)
     f === :autoclose && return Ptr{SDL_bool}(x + 0)
     f === :fp && return Ptr{Ptr{Libc.FILE}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_246, f::Symbol)
-    r = Ref{__JL_Ctag_246}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_246}, r)
+function Base.getproperty(x::__JL_Ctag_476, f::Symbol)
+    r = Ref{__JL_Ctag_476}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_476}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_246}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_476}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_247
+
+struct __JL_Ctag_477
     base::Ptr{Uint8}
     here::Ptr{Uint8}
     stop::Ptr{Uint8}
 end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_247}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_477}, f::Symbol)
     f === :base && return Ptr{Ptr{Uint8}}(x + 0)
     f === :here && return Ptr{Ptr{Uint8}}(x + 8)
     f === :stop && return Ptr{Ptr{Uint8}}(x + 16)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_247, f::Symbol)
-    r = Ref{__JL_Ctag_247}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_247}, r)
+function Base.getproperty(x::__JL_Ctag_477, f::Symbol)
+    r = Ref{__JL_Ctag_477}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_477}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_247}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_477}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_248
+
+struct __JL_Ctag_478
     data1::Ptr{Cvoid}
     data2::Ptr{Cvoid}
 end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_248}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_478}, f::Symbol)
     f === :data1 && return Ptr{Ptr{Cvoid}}(x + 0)
     f === :data2 && return Ptr{Ptr{Cvoid}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_248, f::Symbol)
-    r = Ref{__JL_Ctag_248}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_248}, r)
+function Base.getproperty(x::__JL_Ctag_478, f::Symbol)
+    r = Ref{__JL_Ctag_478}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_478}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_248}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_478}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_249
-    data::NTuple{8,UInt8}
-end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_249}, f::Symbol)
-    f === :button && return Ptr{Cint}(x + 0)
-    f === :axis && return Ptr{Cint}(x + 0)
-    f === :hat && return Ptr{__JL_Ctag_250}(x + 0)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_249, f::Symbol)
-    r = Ref{__JL_Ctag_249}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_249}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_249}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_250
+struct __JL_Ctag_480
     hat::Cint
     hat_mask::Cint
 end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_250}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_480}, f::Symbol)
     f === :hat && return Ptr{Cint}(x + 0)
     f === :hat_mask && return Ptr{Cint}(x + 4)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_250, f::Symbol)
-    r = Ref{__JL_Ctag_250}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_250}, r)
+function Base.getproperty(x::__JL_Ctag_480, f::Symbol)
+    r = Ref{__JL_Ctag_480}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_480}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_250}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_480}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
+
+
+const TARGET_OS_MACCATALYST = 0
 
 const __MACOSX__ = 1
 
@@ -5566,6 +6780,8 @@ const __MACOSX__ = 1
 
 # Skipping MacroDefinition: SDL_NORETURN __attribute__ ( ( noreturn ) )
 
+# Skipping MacroDefinition: SDL_FALLTHROUGH __attribute__ ( ( __fallthrough__ ) )
+
 const SIZEOF_VOIDP = 8
 
 const HAVE_GCC_ATOMICS = 1
@@ -5573,6 +6789,8 @@ const HAVE_GCC_ATOMICS = 1
 const HAVE_LIBC = 1
 
 const STDC_HEADERS = 1
+
+const HAVE_DLOPEN = 1
 
 const HAVE_MALLOC = 1
 
@@ -5594,6 +6812,8 @@ const HAVE_UNSETENV = 1
 
 const HAVE_QSORT = 1
 
+const HAVE_BSEARCH = 1
+
 const HAVE_ABS = 1
 
 const HAVE_BCOPY = 1
@@ -5603,6 +6823,8 @@ const HAVE_MEMSET = 1
 const HAVE_MEMCPY = 1
 
 const HAVE_MEMMOVE = 1
+
+const HAVE_MEMCMP = 1
 
 const HAVE_WCSLEN = 1
 
@@ -5618,11 +6840,19 @@ const HAVE_WCSCMP = 1
 
 const HAVE_WCSNCMP = 1
 
+const HAVE_WCSCASECMP = 1
+
+const HAVE_WCSNCASECMP = 1
+
 const HAVE_STRLEN = 1
 
 const HAVE_STRLCPY = 1
 
 const HAVE_STRLCAT = 1
+
+const HAVE_INDEX = 1
+
+const HAVE_RINDEX = 1
 
 const HAVE_STRCHR = 1
 
@@ -5639,6 +6869,8 @@ const HAVE_STRTOUL = 1
 const HAVE_STRTOLL = 1
 
 const HAVE_STRTOULL = 1
+
+const HAVE_STRTOD = 1
 
 const HAVE_ATOI = 1
 
@@ -5708,9 +6940,17 @@ const HAVE_LOG10 = 1
 
 const HAVE_LOG10F = 1
 
+const HAVE_LROUND = 1
+
+const HAVE_LROUNDF = 1
+
 const HAVE_POW = 1
 
 const HAVE_POWF = 1
+
+const HAVE_ROUND = 1
+
+const HAVE_ROUNDF = 1
 
 const HAVE_SCALBN = 1
 
@@ -5728,6 +6968,10 @@ const HAVE_TAN = 1
 
 const HAVE_TANF = 1
 
+const HAVE_TRUNC = 1
+
+const HAVE_TRUNCF = 1
+
 const HAVE_FSEEKO = 1
 
 const HAVE_SIGACTION = 1
@@ -5744,11 +6988,15 @@ const HAVE_SYSCTLBYNAME = 1
 
 const HAVE_MPROTECT = 1
 
+const HAVE_ICONV = 1
+
 const HAVE_PTHREAD_SETNAME_NP = 1
 
 const HAVE_POLL = 1
 
 const HAVE__EXIT = 1
+
+const HAVE_O_CLOEXEC = 1
 
 const SDL_AUDIO_DRIVER_COREAUDIO = 1
 
@@ -5757,6 +7005,10 @@ const SDL_AUDIO_DRIVER_DISK = 1
 const SDL_AUDIO_DRIVER_DUMMY = 1
 
 const SDL_JOYSTICK_IOKIT = 1
+
+const SDL_JOYSTICK_HIDAPI = 1
+
+const SDL_JOYSTICK_VIRTUAL = 1
 
 const SDL_HAPTIC_IOKIT = 1
 
@@ -5778,6 +7030,8 @@ const SDL_VIDEO_RENDER_OGL = 1
 
 const SDL_VIDEO_RENDER_OGL_ES2 = 1
 
+const SDL_VIDEO_RENDER_METAL = 1
+
 const SDL_VIDEO_OPENGL = 1
 
 const SDL_VIDEO_OPENGL_ES2 = 1
@@ -5786,11 +7040,15 @@ const SDL_VIDEO_OPENGL_CGL = 1
 
 const SDL_VIDEO_OPENGL_EGL = 1
 
+const SDL_VIDEO_VULKAN = 1
+
+const SDL_VIDEO_METAL = 1
+
 const SDL_POWER_MACOSX = 1
 
-const SDL_FILESYSTEM_COCOA = 1
+const DYNAPI_NEEDS_DLOPEN = 1
 
-const SDL_ASSEMBLY_ROUTINES = 1
+const _DARWIN_C_SOURCE = 1
 
 const SDL_MAX_SINT8 = Sint8(0x7f)
 
@@ -5833,6 +7091,8 @@ const SDL_LIL_ENDIAN = 1234
 const SDL_BIG_ENDIAN = 4321
 
 const SDL_BYTEORDER = SDL_LIL_ENDIAN
+
+const SDL_FLOATWORDORDER = SDL_BYTEORDER
 
 const SDL_MUTEX_TIMEDOUT = 1
 
@@ -5952,14 +7212,6 @@ const SDL_WINDOWPOS_CENTERED = SDL_WINDOWPOS_CENTERED_DISPLAY(0)
 
 const SDLK_SCANCODE_MASK = 1 << 30
 
-const KMOD_CTRL = KMOD_LCTRL | KMOD_RCTRL
-
-const KMOD_SHIFT = KMOD_LSHIFT | KMOD_RSHIFT
-
-const KMOD_ALT = KMOD_LALT | KMOD_RALT
-
-const KMOD_GUI = KMOD_LGUI | KMOD_RGUI
-
 SDL_BUTTON(X) = 1 << (X - 1)
 
 const SDL_BUTTON_LEFT = 1
@@ -5982,6 +7234,10 @@ const SDL_BUTTON_X1MASK = SDL_BUTTON(SDL_BUTTON_X1)
 
 const SDL_BUTTON_X2MASK = SDL_BUTTON(SDL_BUTTON_X2)
 
+const SDL_IPHONE_MAX_GFORCE = 5.0
+
+const SDL_VIRTUAL_JOYSTICK_DESC_VERSION = 1
+
 const SDL_JOYSTICK_AXIS_MAX = 32767
 
 const SDL_JOYSTICK_AXIS_MIN = -32768
@@ -6003,6 +7259,8 @@ const SDL_HAT_RIGHTDOWN = SDL_HAT_RIGHT | SDL_HAT_DOWN
 const SDL_HAT_LEFTUP = SDL_HAT_LEFT | SDL_HAT_UP
 
 const SDL_HAT_LEFTDOWN = SDL_HAT_LEFT | SDL_HAT_DOWN
+
+const SDL_STANDARD_GRAVITY = Float32(9.80665)
 
 const SDL_MOUSE_TOUCHID = Sint64(-1)
 
@@ -6060,93 +7318,67 @@ const SDL_HAPTIC_CARTESIAN = 1
 
 const SDL_HAPTIC_SPHERICAL = 2
 
+const SDL_HAPTIC_STEERING_AXIS = 3
+
 const SDL_HAPTIC_INFINITY = Cuint(4294967295)
 
-const SDL_HINT_FRAMEBUFFER_ACCELERATION = "SDL_FRAMEBUFFER_ACCELERATION"
+const SDL_HINT_ACCELEROMETER_AS_JOYSTICK = "SDL_ACCELEROMETER_AS_JOYSTICK"
 
-const SDL_HINT_RENDER_DRIVER = "SDL_RENDER_DRIVER"
+const SDL_HINT_ALLOW_ALT_TAB_WHILE_GRABBED = "SDL_ALLOW_ALT_TAB_WHILE_GRABBED"
 
-const SDL_HINT_RENDER_OPENGL_SHADERS = "SDL_RENDER_OPENGL_SHADERS"
+const SDL_HINT_ALLOW_TOPMOST = "SDL_ALLOW_TOPMOST"
 
-const SDL_HINT_RENDER_DIRECT3D_THREADSAFE = "SDL_RENDER_DIRECT3D_THREADSAFE"
+const SDL_HINT_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION = "SDL_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION"
 
-const SDL_HINT_RENDER_DIRECT3D11_DEBUG = "SDL_RENDER_DIRECT3D11_DEBUG"
+const SDL_HINT_ANDROID_APK_EXPANSION_PATCH_FILE_VERSION = "SDL_ANDROID_APK_EXPANSION_PATCH_FILE_VERSION"
 
-const SDL_HINT_RENDER_LOGICAL_SIZE_MODE = "SDL_RENDER_LOGICAL_SIZE_MODE"
+const SDL_HINT_ANDROID_BLOCK_ON_PAUSE = "SDL_ANDROID_BLOCK_ON_PAUSE"
 
-const SDL_HINT_RENDER_SCALE_QUALITY = "SDL_RENDER_SCALE_QUALITY"
+const SDL_HINT_ANDROID_BLOCK_ON_PAUSE_PAUSEAUDIO = "SDL_ANDROID_BLOCK_ON_PAUSE_PAUSEAUDIO"
 
-const SDL_HINT_RENDER_VSYNC = "SDL_RENDER_VSYNC"
+const SDL_HINT_ANDROID_TRAP_BACK_BUTTON = "SDL_ANDROID_TRAP_BACK_BUTTON"
 
-const SDL_HINT_VIDEO_ALLOW_SCREENSAVER = "SDL_VIDEO_ALLOW_SCREENSAVER"
-
-const SDL_HINT_VIDEO_EXTERNAL_CONTEXT = "SDL_VIDEO_EXTERNAL_CONTEXT"
-
-const SDL_HINT_VIDEO_X11_XVIDMODE = "SDL_VIDEO_X11_XVIDMODE"
-
-const SDL_HINT_VIDEO_X11_XINERAMA = "SDL_VIDEO_X11_XINERAMA"
-
-const SDL_HINT_VIDEO_X11_XRANDR = "SDL_VIDEO_X11_XRANDR"
-
-const SDL_HINT_VIDEO_X11_WINDOW_VISUALID = "SDL_VIDEO_X11_WINDOW_VISUALID"
-
-const SDL_HINT_VIDEO_X11_NET_WM_PING = "SDL_VIDEO_X11_NET_WM_PING"
-
-const SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR = "SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR"
-
-const SDL_HINT_VIDEO_X11_FORCE_EGL = "SDL_VIDEO_X11_FORCE_EGL"
-
-const SDL_HINT_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN = "SDL_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN"
-
-const SDL_HINT_WINDOWS_INTRESOURCE_ICON = "SDL_WINDOWS_INTRESOURCE_ICON"
-
-const SDL_HINT_WINDOWS_INTRESOURCE_ICON_SMALL = "SDL_WINDOWS_INTRESOURCE_ICON_SMALL"
-
-const SDL_HINT_WINDOWS_ENABLE_MESSAGELOOP = "SDL_WINDOWS_ENABLE_MESSAGELOOP"
-
-const SDL_HINT_GRAB_KEYBOARD = "SDL_GRAB_KEYBOARD"
-
-const SDL_HINT_MOUSE_DOUBLE_CLICK_TIME = "SDL_MOUSE_DOUBLE_CLICK_TIME"
-
-const SDL_HINT_MOUSE_DOUBLE_CLICK_RADIUS = "SDL_MOUSE_DOUBLE_CLICK_RADIUS"
-
-const SDL_HINT_MOUSE_NORMAL_SPEED_SCALE = "SDL_MOUSE_NORMAL_SPEED_SCALE"
-
-const SDL_HINT_MOUSE_RELATIVE_SPEED_SCALE = "SDL_MOUSE_RELATIVE_SPEED_SCALE"
-
-const SDL_HINT_MOUSE_RELATIVE_MODE_WARP = "SDL_MOUSE_RELATIVE_MODE_WARP"
-
-const SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH = "SDL_MOUSE_FOCUS_CLICKTHROUGH"
-
-const SDL_HINT_TOUCH_MOUSE_EVENTS = "SDL_TOUCH_MOUSE_EVENTS"
-
-const SDL_HINT_MOUSE_TOUCH_EVENTS = "SDL_MOUSE_TOUCH_EVENTS"
-
-const SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS = "SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS"
-
-const SDL_HINT_IDLE_TIMER_DISABLED = "SDL_IOS_IDLE_TIMER_DISABLED"
-
-const SDL_HINT_ORIENTATIONS = "SDL_IOS_ORIENTATIONS"
+const SDL_HINT_APP_NAME = "SDL_APP_NAME"
 
 const SDL_HINT_APPLE_TV_CONTROLLER_UI_EVENTS = "SDL_APPLE_TV_CONTROLLER_UI_EVENTS"
 
 const SDL_HINT_APPLE_TV_REMOTE_ALLOW_ROTATION = "SDL_APPLE_TV_REMOTE_ALLOW_ROTATION"
 
-const SDL_HINT_IOS_HIDE_HOME_INDICATOR = "SDL_IOS_HIDE_HOME_INDICATOR"
+const SDL_HINT_AUDIO_CATEGORY = "SDL_AUDIO_CATEGORY"
 
-const SDL_HINT_ACCELEROMETER_AS_JOYSTICK = "SDL_ACCELEROMETER_AS_JOYSTICK"
+const SDL_HINT_AUDIO_DEVICE_APP_NAME = "SDL_AUDIO_DEVICE_APP_NAME"
 
-const SDL_HINT_TV_REMOTE_AS_JOYSTICK = "SDL_TV_REMOTE_AS_JOYSTICK"
+const SDL_HINT_AUDIO_DEVICE_STREAM_NAME = "SDL_AUDIO_DEVICE_STREAM_NAME"
 
-const SDL_HINT_XINPUT_ENABLED = "SDL_XINPUT_ENABLED"
+const SDL_HINT_AUDIO_DEVICE_STREAM_ROLE = "SDL_AUDIO_DEVICE_STREAM_ROLE"
 
-const SDL_HINT_XINPUT_USE_OLD_JOYSTICK_MAPPING = "SDL_XINPUT_USE_OLD_JOYSTICK_MAPPING"
+const SDL_HINT_AUDIO_RESAMPLING_MODE = "SDL_AUDIO_RESAMPLING_MODE"
 
-const SDL_HINT_GAMECONTROLLERTYPE = "SDL_GAMECONTROLLERTYPE"
+const SDL_HINT_AUTO_UPDATE_JOYSTICKS = "SDL_AUTO_UPDATE_JOYSTICKS"
+
+const SDL_HINT_AUTO_UPDATE_SENSORS = "SDL_AUTO_UPDATE_SENSORS"
+
+const SDL_HINT_BMP_SAVE_LEGACY_FORMAT = "SDL_BMP_SAVE_LEGACY_FORMAT"
+
+const SDL_HINT_DISPLAY_USABLE_BOUNDS = "SDL_DISPLAY_USABLE_BOUNDS"
+
+const SDL_HINT_EMSCRIPTEN_ASYNCIFY = "SDL_EMSCRIPTEN_ASYNCIFY"
+
+const SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT = "SDL_EMSCRIPTEN_KEYBOARD_ELEMENT"
+
+const SDL_HINT_ENABLE_STEAM_CONTROLLERS = "SDL_ENABLE_STEAM_CONTROLLERS"
+
+const SDL_HINT_EVENT_LOGGING = "SDL_EVENT_LOGGING"
+
+const SDL_HINT_FORCE_RAISEWINDOW = "SDL_HINT_FORCE_RAISEWINDOW"
+
+const SDL_HINT_FRAMEBUFFER_ACCELERATION = "SDL_FRAMEBUFFER_ACCELERATION"
 
 const SDL_HINT_GAMECONTROLLERCONFIG = "SDL_GAMECONTROLLERCONFIG"
 
 const SDL_HINT_GAMECONTROLLERCONFIG_FILE = "SDL_GAMECONTROLLERCONFIG_FILE"
+
+const SDL_HINT_GAMECONTROLLERTYPE = "SDL_GAMECONTROLLERTYPE"
 
 const SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES = "SDL_GAMECONTROLLER_IGNORE_DEVICES"
 
@@ -6154,99 +7386,261 @@ const SDL_HINT_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT = "SDL_GAMECONTROLLER_IGNORE
 
 const SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS = "SDL_GAMECONTROLLER_USE_BUTTON_LABELS"
 
+const SDL_HINT_GRAB_KEYBOARD = "SDL_GRAB_KEYBOARD"
+
+const SDL_HINT_IDLE_TIMER_DISABLED = "SDL_IOS_IDLE_TIMER_DISABLED"
+
+const SDL_HINT_IME_INTERNAL_EDITING = "SDL_IME_INTERNAL_EDITING"
+
+const SDL_HINT_IME_SHOW_UI = "SDL_IME_SHOW_UI"
+
+const SDL_HINT_IME_SUPPORT_EXTENDED_TEXT = "SDL_IME_SUPPORT_EXTENDED_TEXT"
+
+const SDL_HINT_IOS_HIDE_HOME_INDICATOR = "SDL_IOS_HIDE_HOME_INDICATOR"
+
 const SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS = "SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"
 
 const SDL_HINT_JOYSTICK_HIDAPI = "SDL_JOYSTICK_HIDAPI"
+
+const SDL_HINT_JOYSTICK_HIDAPI_GAMECUBE = "SDL_JOYSTICK_HIDAPI_GAMECUBE"
+
+const SDL_HINT_JOYSTICK_GAMECUBE_RUMBLE_BRAKE = "SDL_JOYSTICK_GAMECUBE_RUMBLE_BRAKE"
+
+const SDL_HINT_JOYSTICK_HIDAPI_JOY_CONS = "SDL_JOYSTICK_HIDAPI_JOY_CONS"
+
+const SDL_HINT_JOYSTICK_HIDAPI_COMBINE_JOY_CONS = "SDL_JOYSTICK_HIDAPI_COMBINE_JOY_CONS"
+
+const SDL_HINT_JOYSTICK_HIDAPI_LUNA = "SDL_JOYSTICK_HIDAPI_LUNA"
+
+const SDL_HINT_JOYSTICK_HIDAPI_NINTENDO_CLASSIC = "SDL_JOYSTICK_HIDAPI_NINTENDO_CLASSIC"
+
+const SDL_HINT_JOYSTICK_HIDAPI_SHIELD = "SDL_JOYSTICK_HIDAPI_SHIELD"
 
 const SDL_HINT_JOYSTICK_HIDAPI_PS4 = "SDL_JOYSTICK_HIDAPI_PS4"
 
 const SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE = "SDL_JOYSTICK_HIDAPI_PS4_RUMBLE"
 
+const SDL_HINT_JOYSTICK_HIDAPI_PS5 = "SDL_JOYSTICK_HIDAPI_PS5"
+
+const SDL_HINT_JOYSTICK_HIDAPI_PS5_PLAYER_LED = "SDL_JOYSTICK_HIDAPI_PS5_PLAYER_LED"
+
+const SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE = "SDL_JOYSTICK_HIDAPI_PS5_RUMBLE"
+
+const SDL_HINT_JOYSTICK_HIDAPI_STADIA = "SDL_JOYSTICK_HIDAPI_STADIA"
+
 const SDL_HINT_JOYSTICK_HIDAPI_STEAM = "SDL_JOYSTICK_HIDAPI_STEAM"
 
 const SDL_HINT_JOYSTICK_HIDAPI_SWITCH = "SDL_JOYSTICK_HIDAPI_SWITCH"
 
+const SDL_HINT_JOYSTICK_HIDAPI_SWITCH_HOME_LED = "SDL_JOYSTICK_HIDAPI_SWITCH_HOME_LED"
+
+const SDL_HINT_JOYSTICK_HIDAPI_JOYCON_HOME_LED = "SDL_JOYSTICK_HIDAPI_JOYCON_HOME_LED"
+
+const SDL_HINT_JOYSTICK_HIDAPI_SWITCH_PLAYER_LED = "SDL_JOYSTICK_HIDAPI_SWITCH_PLAYER_LED"
+
 const SDL_HINT_JOYSTICK_HIDAPI_XBOX = "SDL_JOYSTICK_HIDAPI_XBOX"
 
-const SDL_HINT_JOYSTICK_HIDAPI_GAMECUBE = "SDL_JOYSTICK_HIDAPI_GAMECUBE"
+const SDL_HINT_JOYSTICK_RAWINPUT = "SDL_JOYSTICK_RAWINPUT"
 
-const SDL_HINT_ENABLE_STEAM_CONTROLLERS = "SDL_ENABLE_STEAM_CONTROLLERS"
+const SDL_HINT_JOYSTICK_RAWINPUT_CORRELATE_XINPUT = "SDL_JOYSTICK_RAWINPUT_CORRELATE_XINPUT"
 
-const SDL_HINT_ALLOW_TOPMOST = "SDL_ALLOW_TOPMOST"
+const SDL_HINT_JOYSTICK_ROG_CHAKRAM = "SDL_JOYSTICK_ROG_CHAKRAM"
 
-const SDL_HINT_TIMER_RESOLUTION = "SDL_TIMER_RESOLUTION"
+const SDL_HINT_JOYSTICK_THREAD = "SDL_JOYSTICK_THREAD"
+
+const SDL_HINT_KMSDRM_REQUIRE_DRM_MASTER = "SDL_KMSDRM_REQUIRE_DRM_MASTER"
+
+const SDL_HINT_JOYSTICK_DEVICE = "SDL_JOYSTICK_DEVICE"
+
+const SDL_HINT_LINUX_DIGITAL_HATS = "SDL_LINUX_DIGITAL_HATS"
+
+const SDL_HINT_LINUX_HAT_DEADZONES = "SDL_LINUX_HAT_DEADZONES"
+
+const SDL_HINT_LINUX_JOYSTICK_CLASSIC = "SDL_LINUX_JOYSTICK_CLASSIC"
+
+const SDL_HINT_LINUX_JOYSTICK_DEADZONES = "SDL_LINUX_JOYSTICK_DEADZONES"
+
+const SDL_HINT_MAC_BACKGROUND_APP = "SDL_MAC_BACKGROUND_APP"
+
+const SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK = "SDL_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK"
+
+const SDL_HINT_MAC_OPENGL_ASYNC_DISPATCH = "SDL_MAC_OPENGL_ASYNC_DISPATCH"
+
+const SDL_HINT_MOUSE_DOUBLE_CLICK_RADIUS = "SDL_MOUSE_DOUBLE_CLICK_RADIUS"
+
+const SDL_HINT_MOUSE_DOUBLE_CLICK_TIME = "SDL_MOUSE_DOUBLE_CLICK_TIME"
+
+const SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH = "SDL_MOUSE_FOCUS_CLICKTHROUGH"
+
+const SDL_HINT_MOUSE_NORMAL_SPEED_SCALE = "SDL_MOUSE_NORMAL_SPEED_SCALE"
+
+const SDL_HINT_MOUSE_RELATIVE_MODE_CENTER = "SDL_MOUSE_RELATIVE_MODE_CENTER"
+
+const SDL_HINT_MOUSE_RELATIVE_MODE_WARP = "SDL_MOUSE_RELATIVE_MODE_WARP"
+
+const SDL_HINT_MOUSE_RELATIVE_SCALING = "SDL_MOUSE_RELATIVE_SCALING"
+
+const SDL_HINT_MOUSE_RELATIVE_SPEED_SCALE = "SDL_MOUSE_RELATIVE_SPEED_SCALE"
+
+const SDL_HINT_MOUSE_RELATIVE_WARP_MOTION = "SDL_MOUSE_RELATIVE_WARP_MOTION"
+
+const SDL_HINT_MOUSE_TOUCH_EVENTS = "SDL_MOUSE_TOUCH_EVENTS"
+
+const SDL_HINT_MOUSE_AUTO_CAPTURE = "SDL_MOUSE_AUTO_CAPTURE"
+
+const SDL_HINT_NO_SIGNAL_HANDLERS = "SDL_NO_SIGNAL_HANDLERS"
+
+const SDL_HINT_OPENGL_ES_DRIVER = "SDL_OPENGL_ES_DRIVER"
+
+const SDL_HINT_ORIENTATIONS = "SDL_IOS_ORIENTATIONS"
+
+const SDL_HINT_POLL_SENTINEL = "SDL_POLL_SENTINEL"
+
+const SDL_HINT_PREFERRED_LOCALES = "SDL_PREFERRED_LOCALES"
 
 const SDL_HINT_QTWAYLAND_CONTENT_ORIENTATION = "SDL_QTWAYLAND_CONTENT_ORIENTATION"
 
 const SDL_HINT_QTWAYLAND_WINDOW_FLAGS = "SDL_QTWAYLAND_WINDOW_FLAGS"
 
-const SDL_HINT_THREAD_STACK_SIZE = "SDL_THREAD_STACK_SIZE"
+const SDL_HINT_RENDER_BATCHING = "SDL_RENDER_BATCHING"
 
-const SDL_HINT_VIDEO_HIGHDPI_DISABLED = "SDL_VIDEO_HIGHDPI_DISABLED"
+const SDL_HINT_RENDER_LINE_METHOD = "SDL_RENDER_LINE_METHOD"
 
-const SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK = "SDL_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK"
+const SDL_HINT_RENDER_DIRECT3D11_DEBUG = "SDL_RENDER_DIRECT3D11_DEBUG"
 
-const SDL_HINT_VIDEO_WIN_D3DCOMPILER = "SDL_VIDEO_WIN_D3DCOMPILER"
+const SDL_HINT_RENDER_DIRECT3D_THREADSAFE = "SDL_RENDER_DIRECT3D_THREADSAFE"
 
-const SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT = "SDL_VIDEO_WINDOW_SHARE_PIXEL_FORMAT"
+const SDL_HINT_RENDER_DRIVER = "SDL_RENDER_DRIVER"
 
-const SDL_HINT_WINRT_PRIVACY_POLICY_URL = "SDL_WINRT_PRIVACY_POLICY_URL"
+const SDL_HINT_RENDER_LOGICAL_SIZE_MODE = "SDL_RENDER_LOGICAL_SIZE_MODE"
 
-const SDL_HINT_WINRT_PRIVACY_POLICY_LABEL = "SDL_WINRT_PRIVACY_POLICY_LABEL"
+const SDL_HINT_RENDER_OPENGL_SHADERS = "SDL_RENDER_OPENGL_SHADERS"
 
-const SDL_HINT_WINRT_HANDLE_BACK_BUTTON = "SDL_WINRT_HANDLE_BACK_BUTTON"
+const SDL_HINT_RENDER_SCALE_QUALITY = "SDL_RENDER_SCALE_QUALITY"
 
-const SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES = "SDL_VIDEO_MAC_FULLSCREEN_SPACES"
-
-const SDL_HINT_MAC_BACKGROUND_APP = "SDL_MAC_BACKGROUND_APP"
-
-const SDL_HINT_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION = "SDL_ANDROID_APK_EXPANSION_MAIN_FILE_VERSION"
-
-const SDL_HINT_ANDROID_APK_EXPANSION_PATCH_FILE_VERSION = "SDL_ANDROID_APK_EXPANSION_PATCH_FILE_VERSION"
-
-const SDL_HINT_IME_INTERNAL_EDITING = "SDL_IME_INTERNAL_EDITING"
-
-const SDL_HINT_ANDROID_TRAP_BACK_BUTTON = "SDL_ANDROID_TRAP_BACK_BUTTON"
-
-const SDL_HINT_ANDROID_BLOCK_ON_PAUSE = "SDL_ANDROID_BLOCK_ON_PAUSE"
+const SDL_HINT_RENDER_VSYNC = "SDL_RENDER_VSYNC"
 
 const SDL_HINT_RETURN_KEY_HIDES_IME = "SDL_RETURN_KEY_HIDES_IME"
 
-const SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT = "SDL_EMSCRIPTEN_KEYBOARD_ELEMENT"
-
-const SDL_HINT_NO_SIGNAL_HANDLERS = "SDL_NO_SIGNAL_HANDLERS"
-
-const SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4 = "SDL_WINDOWS_NO_CLOSE_ON_ALT_F4"
-
-const SDL_HINT_BMP_SAVE_LEGACY_FORMAT = "SDL_BMP_SAVE_LEGACY_FORMAT"
-
-const SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING = "SDL_WINDOWS_DISABLE_THREAD_NAMING"
-
 const SDL_HINT_RPI_VIDEO_LAYER = "SDL_RPI_VIDEO_LAYER"
+
+const SDL_HINT_SCREENSAVER_INHIBIT_ACTIVITY_NAME = "SDL_SCREENSAVER_INHIBIT_ACTIVITY_NAME"
+
+const SDL_HINT_THREAD_FORCE_REALTIME_TIME_CRITICAL = "SDL_THREAD_FORCE_REALTIME_TIME_CRITICAL"
+
+const SDL_HINT_THREAD_PRIORITY_POLICY = "SDL_THREAD_PRIORITY_POLICY"
+
+const SDL_HINT_THREAD_STACK_SIZE = "SDL_THREAD_STACK_SIZE"
+
+const SDL_HINT_TIMER_RESOLUTION = "SDL_TIMER_RESOLUTION"
+
+const SDL_HINT_TOUCH_MOUSE_EVENTS = "SDL_TOUCH_MOUSE_EVENTS"
+
+const SDL_HINT_VITA_TOUCH_MOUSE_DEVICE = "SDL_HINT_VITA_TOUCH_MOUSE_DEVICE"
+
+const SDL_HINT_TV_REMOTE_AS_JOYSTICK = "SDL_TV_REMOTE_AS_JOYSTICK"
+
+const SDL_HINT_VIDEO_ALLOW_SCREENSAVER = "SDL_VIDEO_ALLOW_SCREENSAVER"
 
 const SDL_HINT_VIDEO_DOUBLE_BUFFER = "SDL_VIDEO_DOUBLE_BUFFER"
 
-const SDL_HINT_OPENGL_ES_DRIVER = "SDL_OPENGL_ES_DRIVER"
+const SDL_HINT_VIDEO_EGL_ALLOW_TRANSPARENCY = "SDL_VIDEO_EGL_ALLOW_TRANSPARENCY"
 
-const SDL_HINT_AUDIO_RESAMPLING_MODE = "SDL_AUDIO_RESAMPLING_MODE"
+const SDL_HINT_VIDEO_EXTERNAL_CONTEXT = "SDL_VIDEO_EXTERNAL_CONTEXT"
 
-const SDL_HINT_AUDIO_CATEGORY = "SDL_AUDIO_CATEGORY"
+const SDL_HINT_VIDEO_HIGHDPI_DISABLED = "SDL_VIDEO_HIGHDPI_DISABLED"
 
-const SDL_HINT_RENDER_BATCHING = "SDL_RENDER_BATCHING"
+const SDL_HINT_VIDEO_MAC_FULLSCREEN_SPACES = "SDL_VIDEO_MAC_FULLSCREEN_SPACES"
 
-const SDL_HINT_EVENT_LOGGING = "SDL_EVENT_LOGGING"
+const SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS = "SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS"
+
+const SDL_HINT_VIDEO_WAYLAND_ALLOW_LIBDECOR = "SDL_VIDEO_WAYLAND_ALLOW_LIBDECOR"
+
+const SDL_HINT_VIDEO_WAYLAND_PREFER_LIBDECOR = "SDL_VIDEO_WAYLAND_PREFER_LIBDECOR"
+
+const SDL_HINT_VIDEO_WAYLAND_MODE_EMULATION = "SDL_VIDEO_WAYLAND_MODE_EMULATION"
+
+const SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT = "SDL_VIDEO_WINDOW_SHARE_PIXEL_FORMAT"
+
+const SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL = "SDL_VIDEO_FOREIGN_WINDOW_OPENGL"
+
+const SDL_HINT_VIDEO_FOREIGN_WINDOW_VULKAN = "SDL_VIDEO_FOREIGN_WINDOW_VULKAN"
+
+const SDL_HINT_VIDEO_WIN_D3DCOMPILER = "SDL_VIDEO_WIN_D3DCOMPILER"
+
+const SDL_HINT_VIDEO_X11_FORCE_EGL = "SDL_VIDEO_X11_FORCE_EGL"
+
+const SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR = "SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR"
+
+const SDL_HINT_VIDEO_X11_NET_WM_PING = "SDL_VIDEO_X11_NET_WM_PING"
+
+const SDL_HINT_VIDEO_X11_WINDOW_VISUALID = "SDL_VIDEO_X11_WINDOW_VISUALID"
+
+const SDL_HINT_VIDEO_X11_XINERAMA = "SDL_VIDEO_X11_XINERAMA"
+
+const SDL_HINT_VIDEO_X11_XRANDR = "SDL_VIDEO_X11_XRANDR"
+
+const SDL_HINT_VIDEO_X11_XVIDMODE = "SDL_VIDEO_X11_XVIDMODE"
+
+const SDL_HINT_WAVE_FACT_CHUNK = "SDL_WAVE_FACT_CHUNK"
 
 const SDL_HINT_WAVE_RIFF_CHUNK_SIZE = "SDL_WAVE_RIFF_CHUNK_SIZE"
 
 const SDL_HINT_WAVE_TRUNCATION = "SDL_WAVE_TRUNCATION"
 
-const SDL_HINT_WAVE_FACT_CHUNK = "SDL_WAVE_FACT_CHUNK"
+const SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING = "SDL_WINDOWS_DISABLE_THREAD_NAMING"
 
-const SDL_HINT_DISPLAY_USABLE_BOUNDS = "SDL_DISPLAY_USABLE_BOUNDS"
+const SDL_HINT_WINDOWS_ENABLE_MESSAGELOOP = "SDL_WINDOWS_ENABLE_MESSAGELOOP"
+
+const SDL_HINT_WINDOWS_FORCE_MUTEX_CRITICAL_SECTIONS = "SDL_WINDOWS_FORCE_MUTEX_CRITICAL_SECTIONS"
+
+const SDL_HINT_WINDOWS_FORCE_SEMAPHORE_KERNEL = "SDL_WINDOWS_FORCE_SEMAPHORE_KERNEL"
+
+const SDL_HINT_WINDOWS_INTRESOURCE_ICON = "SDL_WINDOWS_INTRESOURCE_ICON"
+
+const SDL_HINT_WINDOWS_INTRESOURCE_ICON_SMALL = "SDL_WINDOWS_INTRESOURCE_ICON_SMALL"
+
+const SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4 = "SDL_WINDOWS_NO_CLOSE_ON_ALT_F4"
+
+const SDL_HINT_WINDOWS_USE_D3D9EX = "SDL_WINDOWS_USE_D3D9EX"
+
+const SDL_HINT_WINDOWS_DPI_AWARENESS = "SDL_WINDOWS_DPI_AWARENESS"
+
+const SDL_HINT_WINDOWS_DPI_SCALING = "SDL_WINDOWS_DPI_SCALING"
+
+const SDL_HINT_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN = "SDL_WINDOW_FRAME_USABLE_WHILE_CURSOR_HIDDEN"
+
+const SDL_HINT_WINDOW_NO_ACTIVATION_WHEN_SHOWN = "SDL_WINDOW_NO_ACTIVATION_WHEN_SHOWN"
+
+const SDL_HINT_WINRT_HANDLE_BACK_BUTTON = "SDL_WINRT_HANDLE_BACK_BUTTON"
+
+const SDL_HINT_WINRT_PRIVACY_POLICY_LABEL = "SDL_WINRT_PRIVACY_POLICY_LABEL"
+
+const SDL_HINT_WINRT_PRIVACY_POLICY_URL = "SDL_WINRT_PRIVACY_POLICY_URL"
+
+const SDL_HINT_X11_FORCE_OVERRIDE_REDIRECT = "SDL_X11_FORCE_OVERRIDE_REDIRECT"
+
+const SDL_HINT_XINPUT_ENABLED = "SDL_XINPUT_ENABLED"
+
+const SDL_HINT_DIRECTINPUT_ENABLED = "SDL_DIRECTINPUT_ENABLED"
+
+const SDL_HINT_XINPUT_USE_OLD_JOYSTICK_MAPPING = "SDL_XINPUT_USE_OLD_JOYSTICK_MAPPING"
+
+const SDL_HINT_AUDIO_INCLUDE_MONITORS = "SDL_AUDIO_INCLUDE_MONITORS"
+
+const SDL_HINT_X11_WINDOW_TYPE = "SDL_X11_WINDOW_TYPE"
+
+const SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE = "SDL_QUIT_ON_LAST_WINDOW_CLOSE"
+
+const SDL_HINT_VIDEODRIVER = "SDL_VIDEODRIVER"
+
+const SDL_HINT_AUDIODRIVER = "SDL_AUDIODRIVER"
+
+const SDL_HINT_KMSDRM_DEVICE_INDEX = "SDL_KMSDRM_DEVICE_INDEX"
+
+const SDL_HINT_TRACKPAD_IS_TOUCH_ONLY = "SDL_TRACKPAD_IS_TOUCH_ONLY"
 
 const SDL_MAX_LOG_MESSAGE = 4096
-
-const SDL_STANDARD_GRAVITY = Float32(9.80665)
 
 const SDL_NONSHAPEABLE_WINDOW = -1
 
@@ -6256,9 +7650,9 @@ const SDL_WINDOW_LACKS_SHAPE = -3
 
 const SDL_MAJOR_VERSION = 2
 
-const SDL_MINOR_VERSION = 0
+const SDL_MINOR_VERSION = 24
 
-const SDL_PATCHLEVEL = 12
+const SDL_PATCHLEVEL = 2
 
 SDL_VERSIONNUM(X, Y, Z) = X * 1000 + Y * 100 + Z
 
@@ -6286,9 +7680,9 @@ const SDL_INIT_EVERYTHING = ((((((SDL_INIT_TIMER | SDL_INIT_AUDIO) | SDL_INIT_VI
 
 const SDL_MIXER_MAJOR_VERSION = 2
 
-const SDL_MIXER_MINOR_VERSION = 0
+const SDL_MIXER_MINOR_VERSION = 6
 
-const SDL_MIXER_PATCHLEVEL = 4
+const SDL_MIXER_PATCHLEVEL = 2
 
 const MIX_MAJOR_VERSION = SDL_MIXER_MAJOR_VERSION
 
@@ -6300,7 +7694,7 @@ const SDL_MIXER_COMPILEDVERSION = SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MI
 
 const MIX_CHANNELS = 8
 
-const MIX_DEFAULT_FREQUENCY = 22050
+const MIX_DEFAULT_FREQUENCY = 44100
 
 const MIX_DEFAULT_FORMAT = AUDIO_S16LSB
 
@@ -6314,9 +7708,9 @@ const MIX_EFFECTSMAXSPEED = "MIX_EFFECTSMAXSPEED"
 
 const SDL_IMAGE_MAJOR_VERSION = 2
 
-const SDL_IMAGE_MINOR_VERSION = 0
+const SDL_IMAGE_MINOR_VERSION = 6
 
-const SDL_IMAGE_PATCHLEVEL = 5
+const SDL_IMAGE_PATCHLEVEL = 2
 
 const SDL_IMAGE_COMPILEDVERSION = SDL_VERSIONNUM(SDL_IMAGE_MAJOR_VERSION, SDL_IMAGE_MINOR_VERSION, SDL_IMAGE_PATCHLEVEL)
 
@@ -6355,6 +7749,30 @@ const TTF_HINTING_LIGHT = 1
 const TTF_HINTING_MONO = 2
 
 const TTF_HINTING_NONE = 3
+
+const FPS_UPPER_LIMIT = 200
+
+const FPS_LOWER_LIMIT = 1
+
+const FPS_DEFAULT = 30
+
+# Skipping MacroDefinition: SDL2_FRAMERATE_SCOPE extern
+
+const SDL2_GFXPRIMITIVES_MAJOR = 1
+
+const SDL2_GFXPRIMITIVES_MINOR = 0
+
+const SDL2_GFXPRIMITIVES_MICRO = 3
+
+# Skipping MacroDefinition: SDL2_GFXPRIMITIVES_SCOPE extern
+
+# Skipping MacroDefinition: SDL2_IMAGEFILTER_SCOPE extern
+
+const SMOOTHING_OFF = 0
+
+const SMOOTHING_ON = 1
+
+# Skipping MacroDefinition: SDL2_ROTOZOOM_SCOPE extern
 
 # exports
 const PREFIXES = ["TTF_", "IMG_", "Mix_", "SDL_", "MIX_", "RW_", "AUDIO_", "KMOD_", "HAVE_"]
