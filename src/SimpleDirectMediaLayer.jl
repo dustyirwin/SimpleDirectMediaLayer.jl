@@ -10,7 +10,7 @@ module SimpleDirectMediaLayer
     using ColorTypes
 
     import Base.unsafe_convert
-    export  TTF_Init, TTF_OpenFont, TTF_RenderText_Blended, TTF_SizeText
+    export TTF_Init, TTF_OpenFont, TTF_RenderText_Blended, TTF_SizeText
 
     mutable struct SDLWindow
         win::Ptr{SDL_Window}
